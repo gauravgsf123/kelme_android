@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <layer-list>
+            <item>
+                <!--<shape>
+                    <gradient android:angle="90"
+                        android:endColor="#03005C"
+                        android:startColor="#C70B0D"
+                        android:type="linear" />
+                </shape>-->
+                <bitmap
+                android:gravity="fill_horizontal|fill_vertical"
+                android:src="@drawable/background" />
+            </item>
+            <item>
+                <bitmap
+                    android:gravity="center_vertical|center_horizontal"
+                    android:src="@drawable/kelme_app_logo" />
+            </item>
+        </layer-list>
+    </item>
+</selector>

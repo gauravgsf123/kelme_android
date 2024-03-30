@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/statusBarColor">
+
+    <com.kelme.custom.MediumTextview
+        android:id="@+id/nameTxt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:maxLines="3"
+        android:padding="@dimen/_10sdp"
+        android:text="@string/title"
+        android:textColor="@color/white"
+        android:textSize="@dimen/_12sdp"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_detail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/_10sdp"
+        android:paddingStart="@dimen/_10sdp"
+        android:paddingEnd="@dimen/_10sdp"
+        android:paddingBottom="@dimen/_10sdp"
+        app:layout_constraintTop_toBottomOf="@+id/nameTxt">
+
+        <com.kelme.custom.MediumTextview
+            android:id="@+id/tv_time"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:drawableStart="@drawable/stopwatch"
+            android:drawablePadding="@dimen/_5sdp"
+            android:justificationMode="inter_word"
+            android:textColor="@color/textview_gray"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@+id/tv_location"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="29 Jan 2019" />
+
+        <com.kelme.custom.MediumTextview
+            android:id="@+id/tv_location"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:drawableStart="@drawable/place"
+            android:drawablePadding="@dimen/_5sdp"
+            android:textColor="@color/textview_gray"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@+id/tv_time"
+            app:layout_constraintRight_toLeftOf="@+id/tv_risk_type"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Jazan"
+            android:maxLines="1"
+            android:justificationMode="inter_word"
+            android:ellipsize="marquee"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:scrollHorizontally="true"
+            android:singleLine="true"/>
+
+        <com.kelme.custom.MediumTextview
+            android:id="@+id/tv_risk_type"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:drawableStart="@drawable/price"
+            android:drawablePadding="@dimen/_5sdp"
+            android:textColor="@color/textview_gray"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@+id/tv_location"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Missile attack"
+            android:ellipsize="marquee"
+            android:focusable="true"
+            android:justificationMode="inter_word"
+            android:maxLines="1"
+            android:focusableInTouchMode="true"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:scrollHorizontally="true"
+            android:singleLine="true"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_1sdp"
+        android:background="@color/textview_gray"
+        app:layout_constraintTop_toBottomOf="@+id/cl_detail" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

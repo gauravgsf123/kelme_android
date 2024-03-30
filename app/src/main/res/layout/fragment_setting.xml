@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:context=".fragment.SettingFragment">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/enableTrackingConstraint"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.kelme.custom.RegularTextView
+                android:id="@+id/enableTrackingTxt"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/_12sdp"
+                android:text="@string/enable_tracking"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_12sdp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/enableTrackingSwitch"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:checked="false"
+                android:padding="@dimen/_12sdp"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_12sdp"
+                android:theme="@style/SwitchStyle"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:thumbTint="@color/white" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_1sdp"
+            android:background="@color/foregroundColor"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/enableTrackingConstraint" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/pushNotificationsConstraint"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_2sdp"
+            app:layout_constraintTop_toBottomOf="@+id/enableTrackingConstraint">
+
+            <com.kelme.custom.RegularTextView
+                android:id="@+id/pushNotificationsTxt"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/_12sdp"
+                android:text="@string/push_notification"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_12sdp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/pushNotificationsSwitch"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:checked="false"
+                android:padding="@dimen/_12sdp"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_12sdp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:theme="@style/SwitchStyle"
+                app:thumbTint="@color/white" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_1sdp"
+            android:background="@color/foregroundColor"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/pushNotificationsConstraint" />
+
+<!--        <androidx.constraintlayout.widget.ConstraintLayout-->
+<!--            android:id="@+id/milesConstraint"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginTop="@dimen/_2sdp"-->
+<!--            app:layout_constraintTop_toBottomOf="@id/pushNotificationsConstraint">-->
+
+<!--            <com.kelme.custom.RegularTextView-->
+<!--                android:id="@+id/setMilesTxt"-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginEnd="@dimen/_5sdp"-->
+<!--                android:padding="@dimen/_12sdp"-->
+<!--                android:text="@string/set_distance"-->
+<!--                android:textColor="@color/white"-->
+<!--                android:textSize="@dimen/_12ssp"-->
+<!--                app:layout_constraintEnd_toStartOf="@id/etMilesCount"-->
+<!--                app:layout_constraintStart_toStartOf="parent"-->
+<!--                app:layout_constraintTop_toTopOf="parent" />-->
+
+<!--            <com.kelme.custom.RegularEditText-->
+<!--                android:id="@+id/etMilesCount"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:background="@drawable/edittext_background"-->
+<!--                android:gravity="center"-->
+<!--                android:imeOptions="actionDone"-->
+<!--                android:inputType="number"-->
+<!--                android:paddingStart="@dimen/_10sdp"-->
+<!--                android:paddingEnd="@dimen/_10sdp"-->
+<!--                android:textColor="@color/black"-->
+<!--                android:textSize="@dimen/_12sdp"-->
+<!--                app:layout_constraintBottom_toBottomOf="parent"-->
+<!--                app:layout_constraintRight_toLeftOf="@+id/miles"-->
+<!--                app:layout_constraintTop_toTopOf="parent"-->
+<!--                tools:text="0" />-->
+
+<!--            <com.kelme.custom.MediumTextview-->
+<!--                android:id="@+id/miles"-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:padding="@dimen/_12sdp"-->
+<!--                android:text="@string/meters"-->
+<!--                android:textColor="@color/white"-->
+<!--                android:textSize="@dimen/_12ssp"-->
+<!--                app:layout_constraintBottom_toBottomOf="parent"-->
+<!--                app:layout_constraintRight_toRightOf="parent"-->
+<!--                app:layout_constraintTop_toTopOf="parent" />-->
+
+
+<!--        </androidx.constraintlayout.widget.ConstraintLayout>-->
+
+<!--        <View-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="@dimen/_1sdp"-->
+<!--            android:background="@color/foregroundColor"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/milesConstraint" />-->
+
+        <com.kelme.custom.RegularTextView
+            android:id="@+id/changePasswordTxt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableEnd="@drawable/right_arrow"
+            android:padding="@dimen/_12sdp"
+            android:text="@string/change_password"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_12sdp"
+            app:layout_constraintTop_toBottomOf="@+id/pushNotificationsConstraint" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_1sdp"
+            android:background="@color/foregroundColor"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/changePasswordTxt" />
+
+        <com.kelme.custom.RegularTextView
+            android:id="@+id/termConditionTxt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_2sdp"
+            android:drawableEnd="@drawable/right_arrow"
+            android:padding="@dimen/_12sdp"
+            android:text="@string/term_condition"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_12sdp"
+            app:layout_constraintTop_toBottomOf="@+id/changePasswordTxt" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_1sdp"
+            android:background="@color/foregroundColor"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/termConditionTxt" />
+
+        <com.kelme.custom.RegularTextView
+            android:id="@+id/privacyPolicyTxt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_2sdp"
+            android:drawableEnd="@drawable/right_arrow"
+            android:padding="@dimen/_12sdp"
+            android:text="@string/privacy_policy"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_12sdp"
+            app:layout_constraintTop_toBottomOf="@+id/termConditionTxt" />
+
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_1sdp"
+            android:background="@color/foregroundColor"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/privacyPolicyTxt" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

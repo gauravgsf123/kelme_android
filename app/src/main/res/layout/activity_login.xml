@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/background"
+        tools:context=".activity.login.LoginActivity">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_margin="@dimen/_20sdp"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <ImageView
+                android:id="@+id/logo"
+                android:layout_width="@dimen/_120sdp"
+                android:layout_height="@dimen/_120sdp"
+                android:src="@drawable/kelme_app_logo"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.kelme.custom.RegularTextView
+                android:id="@+id/app_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:text="@string/krisk24"
+                android:visibility="gone"
+                android:gravity="center"
+                android:textSize="@dimen/_16sdp"
+                app:layout_constraintTop_toBottomOf="@+id/logo" />
+
+            <com.kelme.custom.RegularEditText
+                android:id="@+id/etEmail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/email_id"
+                android:textSize="@dimen/_12ssp"
+                android:padding="@dimen/_8sdp"
+                android:gravity="center|start"
+                android:textColor="@color/black"
+                android:textColorHint="@color/hint"
+                android:layout_marginLeft="@dimen/_3sdp"
+                android:layout_marginRight="@dimen/_3sdp"
+                android:drawableStart="@drawable/email"
+                android:drawablePadding="@dimen/_10sdp"
+                android:layout_marginTop="@dimen/_45sdp"
+                android:inputType="textEmailAddress"
+                android:imeOptions="actionNext"
+                android:background="@drawable/edittext_background"
+                app:layout_constraintTop_toBottomOf="@+id/app_name" />
+
+            <com.kelme.custom.RegularEditText
+                android:id="@+id/etPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/password"
+                android:textColorHint="@color/hint"
+                android:textSize="@dimen/_12ssp"
+                android:textColor="@color/black"
+                android:padding="@dimen/_8sdp"
+                android:inputType="textPassword"
+                android:imeOptions="actionDone"
+                android:gravity="center|start"
+                android:drawableStart="@drawable/lock"
+                android:drawablePadding="@dimen/_10sdp"
+                android:layout_marginLeft="@dimen/_3sdp"
+                android:layout_marginRight="@dimen/_3sdp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:background="@drawable/edittext_background"
+                app:layout_constraintTop_toBottomOf="@+id/etEmail" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/contraint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_8sdp"
+                app:layout_constraintTop_toBottomOf="@+id/etPassword"
+                app:layout_constraintBottom_toTopOf="@+id/btnLogin">
+
+                <com.kelme.custom.RegularCheckBox
+                    android:id="@+id/cbRememberMe"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/remember_me"
+                    android:textColor="@color/white"
+                    android:buttonTint="@color/white"
+                    android:textSize="@dimen/_12ssp"
+                    android:gravity="center"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent" />
+
+                <com.kelme.custom.RegularTextView
+                    android:id="@+id/tvForgotPassword"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:textColor="@color/white"
+                    android:text="@string/forgot_password"
+                    android:textSize="@dimen/_12ssp"
+                    android:gravity="center"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintRight_toRightOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <com.kelme.custom.RegularButton
+                android:id="@+id/btnLogin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/login"
+                android:textColor="@color/white"
+                android:padding="@dimen/_8sdp"
+                android:layout_marginTop="@dimen/_20sdp"
+                android:textSize="@dimen/_14sdp"
+                android:background="@drawable/bg_fill_red"
+                app:layout_constraintTop_toBottomOf="@id/contraint" />
+
+            <ImageView
+                android:id="@+id/ivPassword"
+                android:layout_width="@dimen/_18sdp"
+                android:layout_height="@dimen/_18sdp"
+                android:layout_marginEnd="10dp"
+                app:layout_constraintBottom_toBottomOf="@+id/etPassword"
+                app:layout_constraintEnd_toEndOf="@+id/etPassword"
+                app:layout_constraintTop_toTopOf="@+id/etPassword"
+                app:srcCompat="@drawable/show_password" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

@@ -1,0 +1,107 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data></data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".activity.chat.CallerActivity">
+
+        <RelativeLayout
+            android:id="@+id/outgoing_call_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <FrameLayout
+                android:id="@+id/camera_frame"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"></FrameLayout>
+
+            <TextView
+                android:id="@+id/calling_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="36dp"
+                android:layout_marginBottom="36dp"
+                android:text="Audio Calling..."
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:textColor="@color/white"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tv_dots"
+                android:layout_toEndOf="@id/calling_tv"
+                android:text="..."
+                android:visibility="gone"
+                android:textColor="@color/white"
+                android:layout_alignBaseline="@id/calling_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/user_av"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:layout_below="@+id/calling_tv"
+                android:layout_centerHorizontal="true"
+                tools:src="@tools:sample/avatars" />
+
+            <TextView
+                android:id="@+id/user_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/user_av"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="16dp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                android:textColor="@color/white"
+                tools:text="Kelme" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fb_message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginStart="48dp"
+                android:layout_marginBottom="48dp"
+                android:src="@drawable/ic_call"
+                android:visibility="gone"
+                app:backgroundTint="@color/white"
+                app:fabSize="normal"
+                app:tint="@color/white" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fb_recive_call"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginStart="48dp"
+                android:layout_marginBottom="48dp"
+                android:src="@drawable/ic_call"
+                app:backgroundTint="@color/green"
+                app:fabSize="normal"
+                app:tint="@color/white" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fb_end_call"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="48dp"
+                android:layout_marginEnd="48dp"
+                android:src="@drawable/ic_call"
+                app:backgroundTint="@color/red"
+                app:fabSize="normal"
+                app:tint="@color/white" />
+        </RelativeLayout>
+    </RelativeLayout>
+</layout>
