@@ -532,6 +532,11 @@ class DashboardActivity : BaseActivity() {
             //startActivity(Intent(this@DashboardActivity,AudioCallActivity::class.java))
         }
 
+        binding.ivDelete.setOnClickListener {
+            EventBus.getDefault().post(DeleteChatEvent())
+            //startActivity(Intent(this@DashboardActivity,AudioCallActivity::class.java))
+        }
+
         binding.etChatSearch.setOnClickListener {
             Log.d("ivSearch","ivSearch")
             EventBus.getDefault().post(SearchChatUserEvent(binding.etChatSearch.text.toString()))
@@ -818,6 +823,14 @@ class DashboardActivity : BaseActivity() {
 
     fun showAddChatGroupIcon() {
         binding.ivAddChatGroup.visibility = View.VISIBLE
+    }
+
+    fun hideDeleteChatIcon() {
+        binding.ivDelete.visibility = View.INVISIBLE
+    }
+
+    fun showDeleteChatIcon() {
+        binding.ivDelete.visibility = View.VISIBLE
     }
 
     fun hideNotificationIcon() {

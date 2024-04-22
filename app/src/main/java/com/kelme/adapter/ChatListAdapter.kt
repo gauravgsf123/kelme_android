@@ -25,7 +25,10 @@ class ChatListAdapter(
     private var context: Context,
     private var list: ArrayList<ChatListModelWithName?>
 ) : RecyclerView.Adapter<ChatListAdapter.ViewHolder>() {
+    var checkedItems = ArrayList<ChatListModelWithName>()
     lateinit var gson: Gson
+    var isDelete:Boolean= false
+    var selectAll:Boolean= false
     val sharedPreferences = context.getSharedPreferences("USER", AppCompatActivity.MODE_PRIVATE)
 
     var listener: ItemClickListener? = null
@@ -48,7 +51,20 @@ class ChatListAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        list[position]?.let { holder.bind(it) }
+        list[position]?.let {
+            holder.bind(it, isDelete, selectAll)
+
+            holder.binding?.checkbox?.setOnCheckedChangeListener { _, isChecked ->
+                if (holder.binding.checkbox.isChecked) {
+                    list[position]?.let { checkedItems.add(it) }
+                    list[position]!!.isSelected = true
+                } else {
+                    list[position]!!.isSelected = false
+                    list[position]?.let { checkedItems.remove(it) }
+                }
+                //quantityListner.onQuantitychanged(checkedItems)
+            }
+        }
 
     }
 
@@ -57,7 +73,7 @@ class ChatListAdapter(
     class ViewHolder(val view: View, val listener: ItemClickListener?, val context: Context) :
         RecyclerView.ViewHolder(view) {
         var counter = 0
-        private val binding: ItemChatListBinding? = DataBindingUtil.bind(itemView)
+        val binding: ItemChatListBinding? = DataBindingUtil.bind(itemView)
 
         init {
             view.setOnClickListener {
@@ -67,7 +83,7 @@ class ChatListAdapter(
             }
         }
 
-        fun bind(modal: ChatListModelWithName) {
+        fun bind(modal: ChatListModelWithName, isDelete: Boolean, selectAll: Boolean) {
 
             if (modal.chatType == "single") {
                 binding?.tvName?.text = modal.name
@@ -101,12 +117,28 @@ class ChatListAdapter(
                     binding?.tvDateTime?.text = ""
 
             //binding?.tvUnseenMsgCounter?.text = modal.unSeenMsg.toString()
+            if(selectAll) binding?.checkbox?.isChecked = true
+            else binding?.checkbox?.isChecked = false
+
+            if(isDelete) binding?.checkbox?.visibility = View.VISIBLE
+            else binding?.checkbox?.visibility = View.GONE
+
         }
     }
 
-    fun updateItems(newList: ArrayList<ChatListModelWithName?>) {
+    fun updateItems(newList: ArrayList<ChatListModelWithName?>,isDelete:Boolean,selectAll:Boolean=false) {
         // list.clear()
+        this.isDelete = isDelete
+        this.selectAll = selectAll
         list = newList
         notifyDataSetChanged()
     }
+
+    fun getSelectedItem():ArrayList<ChatListModelWithName>{
+        return checkedItems
+    }
+    interface ChatListCallBack{
+        fun getAllItem(selectedList:ArrayList<ChatListModelWithName?>)
+    }
+
 }

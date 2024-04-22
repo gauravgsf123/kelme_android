@@ -39,6 +39,9 @@ object Constants {
     const val CALL_RESPONSE_ACTION_KEY = "fcm_data_key"
     const val CALL_RECEIVE_ACTION = "fcm_data_key"
     const val CALL_CANCEL_ACTION = "fcm_data_key"
+    const val OTP = "otp"
+    const val EMAIL = "email"
+    const val PASSWORD = "password"
     var userName = "user_name"
 
     var userList: ArrayList<ContactModel?> = ArrayList()

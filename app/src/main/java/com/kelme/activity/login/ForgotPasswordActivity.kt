@@ -66,12 +66,13 @@ class ForgotPasswordActivity : BaseActivity() {
 //                        response.message,
 //                        Toast.LENGTH_LONG
 //                    ).show()
-                    startActivity(
-                        Intent(
-                            this@ForgotPasswordActivity,
-                            ResetPasswordActivity::class.java
-                        )
-                    )
+                    var intent = Intent(this@ForgotPasswordActivity, ResetPasswordActivity::class.java)
+                    response.data?.run {
+                        intent.putExtra(Constants.OTP,otp)
+                        intent.putExtra(Constants.EMAIL,binding.etEmail.text?.trim().toString())
+                        intent.putExtra(Constants.PASSWORD,user_pass)
+                    }
+                    startActivity(intent)
                 }
                 is Resource.Loading -> {
                     ProgressDialog.showProgressBar(this)

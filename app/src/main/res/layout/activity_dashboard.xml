@@ -79,16 +79,33 @@
                     app:layout_constraintRight_toLeftOf="@+id/ivNotification"
                     app:layout_constraintTop_toTopOf="parent" />
 
+
                 <ImageView
                     android:id="@+id/ivAddChatGroup"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_20sdp"
-                    android:layout_marginEnd="@dimen/_15sdp"
+                    android:layout_marginEnd="@dimen/_10sdp"
+                    android:padding="@dimen/_5sdp"
                     android:background="@drawable/ic_add"
                     android:visibility="gone"
-                    app:layout_constraintEnd_toStartOf="@+id/ivNotification"
+                    tools:visibility="visible"
+                    app:layout_constraintEnd_toStartOf="@+id/ivDelete"
                     app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:id="@+id/ivDelete"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/_10sdp"
+                    app:tint="@color/white"
+                    android:padding="@dimen/_5sdp"
+                    android:visibility="gone"
+                    tools:visibility="visible"
+                    android:src="@drawable/ic_notification_delete"
+                    app:layout_constraintEnd_toStartOf="@+id/ivNotification"
+                    app:layout_constraintTop_toTopOf="@+id/ivAddChatGroup"
+                    app:layout_constraintBottom_toBottomOf="@+id/ivAddChatGroup"/>
 
                 <ImageView
                     android:id="@+id/ivNotification"
@@ -96,6 +113,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_20sdp"
                     android:layout_marginEnd="@dimen/_20sdp"
+                    android:padding="@dimen/_5sdp"
                     android:background="@drawable/notification"
                     android:contentDescription="@null"
                     app:layout_constraintRight_toRightOf="parent"

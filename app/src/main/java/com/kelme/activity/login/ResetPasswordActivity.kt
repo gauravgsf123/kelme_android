@@ -5,14 +5,19 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.View
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.google.firebase.auth.EmailAuthProvider
+import com.google.firebase.auth.FirebaseAuth
 import com.kelme.R
+import com.kelme.activity.dashboard.DashboardActivity
 import com.kelme.app.BaseActivity
 import com.kelme.databinding.ActivityResetPasswordBinding
 import com.kelme.model.request.ResetPasswordRequest
 import com.kelme.model.request.VerifyOtpRequest
+import com.kelme.utils.Constants
 import com.kelme.utils.ProgressDialog
 import com.kelme.utils.Resource
 import com.kelme.utils.Utils
@@ -22,6 +27,9 @@ class ResetPasswordActivity : BaseActivity() {
 
     private lateinit var binding: ActivityResetPasswordBinding
     private lateinit var viewModal: LoginViewModal
+    private lateinit var email:String
+    private lateinit var password:String
+    private lateinit var otp:String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,7 +38,11 @@ class ResetPasswordActivity : BaseActivity() {
 
         viewModal = ViewModelProvider(this, ViewModalFactory(application)).get(
             LoginViewModal::class.java)
-
+        intent.run {
+            email = getStringExtra(Constants.EMAIL).toString()
+            password = getStringExtra(Constants.PASSWORD).toString()
+            otp = getStringExtra(Constants.OTP).toString()
+        }
         setUi()
         setObserver()
     }
@@ -74,25 +86,13 @@ class ResetPasswordActivity : BaseActivity() {
             when (response) {
                 is Resource.Success -> {
                     ProgressDialog.hideProgressBar()
-//                    Toast.makeText(
-//                        applicationContext,
-//                        response.message,
-//                        Toast.LENGTH_LONG
-//                    ).show()
-                    val intent = Intent(this, LoginActivity::class.java)
-                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    startActivity(intent)
+                    authFIrebase()
                 }
                 is Resource.Loading -> {
                     ProgressDialog.showProgressBar(this)
                 }
                 is Resource.Error -> {
                     ProgressDialog.hideProgressBar()
-//                    Toast.makeText(
-//                        applicationContext,
-//                        response.message,
-//                        Toast.LENGTH_SHORT
-//                    ).show()
                 }
             }
         })
@@ -101,11 +101,6 @@ class ResetPasswordActivity : BaseActivity() {
             when (response) {
                 is Resource.Success -> {
                     ProgressDialog.hideProgressBar()
-//                    Toast.makeText(
-//                        applicationContext,
-//                        response.message,
-//                        Toast.LENGTH_LONG
-//                    ).show()
                     binding.etNewPassword.visibility = View.VISIBLE
                     binding.etConfirmPassword.visibility = View.VISIBLE
                     binding.btnSubmit.text = resources.getString(R.string.reset_password)
@@ -115,11 +110,6 @@ class ResetPasswordActivity : BaseActivity() {
                 }
                 is Resource.Error -> {
                     ProgressDialog.hideProgressBar()
-//                    Toast.makeText(
-//                        applicationContext,
-//                        response.message,
-//                        Toast.LENGTH_SHORT
-//                    ).show()
                 }
             }
         })
@@ -141,5 +131,29 @@ class ResetPasswordActivity : BaseActivity() {
             binding.etNewPassword.text.toString()
         )
         viewModal.resetPassword(request)
+    }
+
+    private fun authFIrebase() {
+        val user = FirebaseAuth.getInstance().currentUser
+        val credential = EmailAuthProvider.getCredential(email, password)
+        user?.reauthenticate(credential)?.addOnCompleteListener {
+            if(it.isSuccessful){
+                user!!.updatePassword(binding.etNewPassword.text.toString().trim())
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            ProgressDialog.hideProgressBar()
+                            Toast.makeText(
+                                this,
+                                "User password updated.",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            val intent = Intent(this, LoginActivity::class.java)
+                            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                            startActivity(intent)
+                            finish()
+                        }
+                    }
+            }
+        }
     }
 }

@@ -13,11 +13,19 @@
         android:background="@color/black"
         android:layout_height="wrap_content">
 
+        <CheckBox
+            android:id="@+id/checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/civ_profile_image"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="6dp"
             android:layout_marginTop="14dp"
             android:src="@drawable/user"
             android:visibility="visible"
@@ -25,15 +33,15 @@
             app:civ_border_color="@color/foregroundColor"
             app:cardBackgroundColor="#FFE5C1"
             app:layout_constraintVertical_bias="0"
+            app:layout_constraintStart_toEndOf="@id/checkbox"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cv_initials"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="6dp"
             android:layout_marginTop="14dp"
             android:visibility="gone"
             app:cardBackgroundColor="#FFE5C1"
@@ -41,7 +49,7 @@
             app:cardElevation="0dp"
             app:layout_constraintVertical_bias="0"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@id/checkbox"
             app:layout_constraintTop_toTopOf="parent">
 
             <com.kelme.custom.BoldTextView

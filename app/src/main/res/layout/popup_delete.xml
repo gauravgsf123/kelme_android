@@ -33,7 +33,7 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/_40sdp"
                     android:gravity="center"
-                    android:text="Are you sure you want to logout?"
+                    android:text="Are you sure you want to delete?"
                     android:textColor="@color/black"
                     android:textSize="@dimen/_16ssp"
                     app:layout_constraintBottom_toTopOf="@+id/btnYes"
