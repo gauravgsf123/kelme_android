@@ -11,9 +11,14 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.util.DisplayMetrics
 import android.util.Log
+import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.View
+import android.widget.PopupWindow
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.FileProvider
 import androidx.databinding.DataBindingUtil
@@ -21,10 +26,12 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
+import com.google.gson.Gson
 import com.kelme.R
 import com.kelme.adapter.ChatAdapter
 import com.kelme.app.BaseActivity
 import com.kelme.databinding.ActivityChatConversionBinding
+import com.kelme.databinding.PopupDeleteBinding
 import com.kelme.fragment.profile.BottomSheetOptionForDocumentUploadFragment
 import com.kelme.interfaces.MediaInterface
 import com.kelme.model.ChatListModelNewUser
@@ -71,6 +78,8 @@ class ChatConversationActivity : BaseActivity(), View.OnClickListener, MediaInte
     var userIdDetails:String=""
     val chatMembers: HashMap<String, Any> = HashMap()
     var userList: ArrayList<ChatListModelWithName?> = ArrayList()
+    private var allChatDelete = 0L
+
 
     private val PERMISSIONS = arrayOf(
         Manifest.permission.CAMERA,
@@ -91,8 +100,8 @@ class ChatConversationActivity : BaseActivity(), View.OnClickListener, MediaInte
         ) {
             getDataIntentFromChatList()
         } else if(PrefManager.read(PrefManager.IS_CALL_FROM_CHAT_LIST_FRAG,
-        Constants.ActivityType.YES
-        ) == Constants.ActivityType.NO){
+                Constants.ActivityType.YES
+            ) == Constants.ActivityType.NO){
             getDataIntentFromSearchActivity()
         }else{
             getDataIntentFromContactList()
@@ -137,6 +146,7 @@ class ChatConversationActivity : BaseActivity(), View.OnClickListener, MediaInte
         userName = name
         uid = PrefManager.read(PrefManager.FCM_USER_ID, "")
         searchChatId(uid, userid)
+        Log.d("chat_id","$userIdDetails $uid $userid")
     }
 
     private fun getDataIntentFromSearchActivity() {
@@ -153,6 +163,7 @@ class ChatConversationActivity : BaseActivity(), View.OnClickListener, MediaInte
         userName = contactModel.name.toString()
         uid = PrefManager.read(PrefManager.FCM_USER_ID, "")
         searchChatId(uid, contactModel.userId!!)
+        Log.d("chat_id","$userIdDetails $uid ${contactModel.userId}")
     }
 
     private fun searchChatId(uid: String, userId: String) {
@@ -162,11 +173,24 @@ class ChatConversationActivity : BaseActivity(), View.OnClickListener, MediaInte
                 if (dataSnapshot.exists()) {
                     for (userSnapshot in dataSnapshot.children) {
                         chatId = userSnapshot.key.toString()
+                        Log.d("chat_id","$chatId")
                         PrefManager.write(PrefManager.FCM_CHAT_ID, chatId)
                         PrefManager.write(PrefManager.SEARCH_CHAT_ID, chatId)
+                        val allChatDelete = conversationReference.child(chatId).child("chatMembersDetails").child(uid).child("allChatDelete")
+                        allChatDelete.addValueEventListener(object : ValueEventListener {
+                            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                                this@ChatConversationActivity.allChatDelete = dataSnapshot.value as Long
+                                //PrefManager.write(PrefManager.ALL_CHAT_DELETE,allChatDelete)
+                                Log.e("Database", "value = $allChatDelete")
+                            }
+                            override fun onCancelled(error: DatabaseError) {
+                                Log.e("Database", error.toString())
+                            }
+                        })
                     }
                     retrieveData()
                     PrefManager.write(PrefManager.CHAT_ID_NOT_FOUND, Constants.ActivityType.NO)
+
                 } else {
                     ProgressDialog.hideProgressBar()
                     PrefManager.write(PrefManager.CHAT_ID_NOT_FOUND, Constants.ActivityType.YES)
@@ -190,7 +214,7 @@ class ChatConversationActivity : BaseActivity(), View.OnClickListener, MediaInte
         if (takePhotoIntent.resolveActivity(packageManager) != null) {
             startActivityForResult(takePhotoIntent, REQUEST_CODE_CAMERA)
         } else {
-          //  Toast.makeText(this, "Camera could not open", Toast.LENGTH_SHORT).show()
+            //  Toast.makeText(this, "Camera could not open", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -287,8 +311,17 @@ class ChatConversationActivity : BaseActivity(), View.OnClickListener, MediaInte
         userName = chatListModel?.name.toString()
         groupName = chatListModel?.chatTitle.toString()
         PrefManager.write(PrefManager.FCM_CHAT_ID, chatId)
-      //  PrefManager.write(PrefManager.FCM_GROUP_NAME, groupName)
+            chatListModel!!.chatMemberDetails[uid]?.allChatDelete.let {
+                if (it != null) {
+                    allChatDelete = it
+                }
+
+            Log.d(TAG, "getDataIntentFromChatList: ChatId $allChatDelete")
+        }
+
+        //  PrefManager.write(PrefManager.FCM_GROUP_NAME, groupName)
         Log.d(TAG, "getDataIntentFromChatList: ChatId $chatId")
+
 
         val uid = PrefManager.read(PrefManager.FCM_USER_ID, "")
         val uniqueID = PrefManager.read(PrefManager.CHAT_UNIQUE_ID, "")
@@ -300,7 +333,7 @@ class ChatConversationActivity : BaseActivity(), View.OnClickListener, MediaInte
 
     private fun retrieveData() {
         val chatId = PrefManager.read(PrefManager.FCM_CHAT_ID, "chatId")
-      //  ProgressDialog.showProgressBar(this)
+        //  ProgressDialog.showProgressBar(this)
         val query = chatMessagesReference.child(chatId)
         val valueEventListener: ValueEventListener = object : ValueEventListener {
             @SuppressLint("SimpleDateFormat")
@@ -321,29 +354,33 @@ class ChatConversationActivity : BaseActivity(), View.OnClickListener, MediaInte
                     msgListWithDate.add(0, chatModelFirst)
                     var previousStamp: Long?
                     msgList.forEachIndexed { index, user ->
-                        val currentStamp = user!!.timestamp
-                        previousStamp = if (index > 0) {
-                            msgList[index - 1]!!.timestamp
-                        } else {
-                            msgList[0]!!.timestamp
-                        }
-                        val currentDate = "" + formatter.format(currentStamp).toString()
-                        val previousDate = "" + formatter.format(previousStamp).toString()
+                        if(allChatDelete!! >=user?.timestamp!!){
+                            Log.d("timestamp","$allChatDelete ${user.timestamp}")
+                        }else{
+                            val currentStamp = user!!.timestamp
+                            previousStamp = if (index > 0) {
+                                msgList[index - 1]!!.timestamp
+                            } else {
+                                msgList[0]!!.timestamp
+                            }
+                            val currentDate = "" + formatter.format(currentStamp).toString()
+                            val previousDate = "" + formatter.format(previousStamp).toString()
 
-                        if (currentDate == previousDate) {
-                            msgListWithDate.add(user)
-                        } else {
-                            val dateUser = user.timestamp
-                            chatModel.message = "" + formatter.format(dateUser).toString()
-                            chatModel.type = "date"
-                            msgListWithDate.add(chatModel)
-                            msgListWithDate.add(user)
+                            if (currentDate == previousDate) {
+                                msgListWithDate.add(user)
+                            } else {
+                                val dateUser = user.timestamp
+                                chatModel.message = "" + formatter.format(dateUser).toString()
+                                chatModel.type = "date"
+                                msgListWithDate.add(chatModel)
+                                msgListWithDate.add(user)
+                            }
                         }
                     }
-                        adapter.updateItems(msgListWithDate)
-                        binding.rvChat.scrollToPosition(adapter.itemCount - 1)
-                        ProgressDialog.hideProgressBar()
-                  //  }, 1500)
+                    adapter.updateItems(msgListWithDate)
+                    binding.rvChat.scrollToPosition(adapter.itemCount - 1)
+                    ProgressDialog.hideProgressBar()
+                    //  }, 1500)
 
                 } else {
                     Log.d(TAG, "onDataChange: no data found hereeeeeeeeee")
@@ -456,6 +493,7 @@ class ChatConversationActivity : BaseActivity(), View.OnClickListener, MediaInte
         binding.myToolbar.backArrow.setOnClickListener(this)
         binding.myToolbar.ivPhone.setOnClickListener(this)
         binding.myToolbar.ivVideo.setOnClickListener(this)
+        binding.myToolbar.ivDelete.setOnClickListener(this)
         binding.layoutChatBottom.ivAttachment.setOnClickListener(this)
         binding.layoutChatBottom.ivSend.setOnClickListener(this)
     }
@@ -577,10 +615,52 @@ class ChatConversationActivity : BaseActivity(), View.OnClickListener, MediaInte
                         createNewNodeAndAddMsgData(uniqueID)
                     }
                 } else {
-                   // Toast.makeText(this, "Enter Message", Toast.LENGTH_SHORT).show()
+                    // Toast.makeText(this, "Enter Message", Toast.LENGTH_SHORT).show()
                 }
             }
+            binding.myToolbar.ivDelete.id->{
+                popupDelete(binding.root)
+            }
         }
+    }
+
+    private fun popupDelete(view: View?) {
+        // inflate the layout of the popup window
+        val inflater = getSystemService(AppCompatActivity.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val popupBinding: PopupDeleteBinding =
+            DataBindingUtil.inflate(inflater, R.layout.popup_delete, null, false)
+        val displayMetrics = DisplayMetrics()
+        windowManager.defaultDisplay.getMetrics(displayMetrics)
+        val height = displayMetrics.heightPixels
+        val width = displayMetrics.widthPixels
+        // create the popup window
+
+        val focusable = true // lets taps outside the popup also dismiss it
+        val popupWindow = PopupWindow(popupBinding.root, width, height, focusable)
+        popupWindow.showAtLocation(view, Gravity.END, 0, 0)
+
+        popupBinding.btnNo.setOnClickListener {
+            popupWindow.dismiss()
+        }
+
+        popupBinding.btnYes.setOnClickListener {
+            deleteChat()
+            popupWindow.dismiss()
+
+        }
+
+    }
+
+    @SuppressLint("SuspiciousIndentation")
+    private fun deleteChat() {
+        val uid = PrefManager.read(PrefManager.FCM_USER_ID, "")
+        val currentTimestamp = System.currentTimeMillis()
+        val dbLastUpdates = FirebaseDatabase.getInstance().getReference("conversations").child(chatId)
+        dbLastUpdates.child("lastUpdate").setValue(currentTimestamp)
+        dbLastUpdates.child("chatLastMessage").setValue("")
+        dbLastUpdates.child("chatMembersDetails").child(uid).child("allChatDelete").setValue(currentTimestamp)
+        dbLastUpdates.child("lastUpdates").child(uid).setValue(currentTimestamp)
+        onBackPressed()
     }
 
     private fun addMsgData(uniqueID: String?, addMsg: ChatModel) {
@@ -660,29 +740,29 @@ class ChatConversationActivity : BaseActivity(), View.OnClickListener, MediaInte
                         binding.myToolbar.tvName.text = chatTitle
                         Utils.loadImage(baseContext, binding.myToolbar.civProfileImage, chatPic)
                         groupName=chatTitle
-                 //       PrefManager.write(PrefManager.FCM_GROUP_NAME, groupName)
+                        //       PrefManager.write(PrefManager.FCM_GROUP_NAME, groupName)
                         userDP=chatPic
-                } else {
-                    //ProgressDialog.hideProgressBar()
-                    Log.d(TAG, "onDataChange: no data found")
+                    } else {
+                        //ProgressDialog.hideProgressBar()
+                        Log.d(TAG, "onDataChange: no data found")
+                    }
                 }
+                override fun onCancelled(databaseError: DatabaseError) {}
             }
-            override fun onCancelled(databaseError: DatabaseError) {}
+            query.addListenerForSingleValueEvent(valueEventListener)
         }
-        query.addListenerForSingleValueEvent(valueEventListener)
-    }
 
-    else if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE_DOC && data != null)
-    {
-       // Toast.makeText(this, "doc selected", Toast.LENGTH_SHORT).show()
+        else if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE_DOC && data != null)
+        {
+            // Toast.makeText(this, "doc selected", Toast.LENGTH_SHORT).show()
 
-        val pathHolder = getRealPathFromUri(this, data.data)
-        if (pathHolder != null) {
-            uploadDocument(pathHolder)
-        }else{
-            val picturePath: String = getPath(this, data.data)
- //           Toast.makeText(this, ""+picturePath, Toast.LENGTH_SHORT).show()
-            Log.d("Picture Path", picturePath)
+            val pathHolder = getRealPathFromUri(this, data.data)
+            if (pathHolder != null) {
+                uploadDocument(pathHolder)
+            }else{
+                val picturePath: String = getPath(this, data.data)
+                //           Toast.makeText(this, ""+picturePath, Toast.LENGTH_SHORT).show()
+                Log.d("Picture Path", picturePath)
 //            val selectedFileUri: Uri? = data.data
 //            val selectedFilePath = FilePath.getPath(this, selectedFileUri)
 //            Log.i(TAG, "Selected File Path:$selectedFilePath")
@@ -718,11 +798,11 @@ class ChatConversationActivity : BaseActivity(), View.OnClickListener, MediaInte
 //                displayName = myFile.name
 //                Toast.makeText(applicationContext, ""+displayName, Toast.LENGTH_SHORT).show()
 //            }
+            }
+        }else {
+            super.onActivityResult(requestCode, resultCode, data)
         }
-    }else {
-        super.onActivityResult(requestCode, resultCode, data)
     }
-}
 
     private fun getPath(context: Context, uri: Uri?): String {
         var result: String? = null
@@ -765,7 +845,7 @@ class ChatConversationActivity : BaseActivity(), View.OnClickListener, MediaInte
 //        } finally {
 //            cursor?.close()
 //        }
- //   }
+    //   }
 
     private fun getRealPathFromUri(context: Context, contentUri: Uri?): String? {
         var cursor: Cursor? = null
@@ -798,18 +878,18 @@ class ChatConversationActivity : BaseActivity(), View.OnClickListener, MediaInte
     }
 
     private fun uploadDocumentFile(pdfUri: File) {
-       // val fileName = File(pdfUri).name
+        // val fileName = File(pdfUri).name
         val stream = Uri.fromFile(pdfUri)
         val riversRef = storageReference.child("document/${stream.lastPathSegment}")
         val uploadTask = riversRef.putFile(stream)
         uploadTask.addOnFailureListener {
             // Handle unsuccessful uploads
-         //   Toast.makeText(this, "failed", Toast.LENGTH_SHORT).show()
+            //   Toast.makeText(this, "failed", Toast.LENGTH_SHORT).show()
         }.addOnSuccessListener {
             // taskSnapshot.metadata contains file metadata such as size, content-type, etc.
             // ...
             riversRef.downloadUrl.addOnSuccessListener { uri ->
-             //   Toast.makeText(this, "yuppppp", Toast.LENGTH_SHORT).show()
+                //   Toast.makeText(this, "yuppppp", Toast.LENGTH_SHORT).show()
                 val (uniqueID, addMsg) = collectMsgData("document", "" + uri, "msg")
                 addMsgData(uniqueID, addMsg)
             }
@@ -904,8 +984,16 @@ class ChatConversationActivity : BaseActivity(), View.OnClickListener, MediaInte
                     "All permissions are required",
                     Toast.LENGTH_LONG
                 ).show()
-               // finish()
+                // finish()
             }
         }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        PrefManager.write(PrefManager.ALL_CHAT_DELETE,0)
+        /*PrefManager.write(PrefManager.FCM_CHAT_ID, "")
+        PrefManager.write(PrefManager.SEARCH_CHAT_ID, "")*/
+
     }
 }

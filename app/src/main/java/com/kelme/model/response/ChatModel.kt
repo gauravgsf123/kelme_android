@@ -6,9 +6,9 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 class ChatModel (
         var actionBy:String?="",
-        var message: String? = " ",
-        var messageId: String?= " ",
-        var sender: String?= " ",
+        var message: String? = "",
+        var messageId: String?= "",
+        var sender: String?= "",
         var status: Long?=0,
         var timestamp: Long?=0,
         var type: String?= " ",

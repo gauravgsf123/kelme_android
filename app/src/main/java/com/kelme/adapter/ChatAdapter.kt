@@ -1,8 +1,10 @@
 package com.kelme.adapter
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +15,7 @@ import com.kelme.R
 import com.kelme.activity.chat.FullScreenImageActivity
 import com.kelme.databinding.*
 import com.kelme.interfaces.ItemClickListener
+import com.kelme.model.response.ChatListModelWithName
 import com.kelme.model.response.ChatModel
 import com.kelme.utils.Constants
 import com.kelme.utils.PrefManager
@@ -385,6 +388,26 @@ class ChatAdapter(
             is MyViewHolderDateMsg -> holder.bind(element as ChatModel)
             else -> throw IllegalArgumentException()
         }
+    }
+
+    @SuppressLint("SuspiciousIndentation")
+    private fun filterChatList(userList: ArrayList<ChatListModelWithName?>):ArrayList<ChatListModelWithName?>{
+        val filterChatList = ArrayList<ChatListModelWithName?>()
+        userList.forEach {model->
+            val allChatDeleteTimestamp = model?.chatMemberDetails?.get("")?.allChatDelete
+            if(allChatDeleteTimestamp!=null && allChatDeleteTimestamp>0){
+                allChatDeleteTimestamp?.let {
+                    if(allChatDeleteTimestamp!! >=model.lastUpdate!!){
+                        Log.d("filterChatList","01 $allChatDeleteTimestamp ${model.lastUpdate}")
+                    }else{
+                        filterChatList.add(model)
+                    }
+                }
+            }else{
+                filterChatList.add(model)
+            }
+        }
+        return filterChatList
     }
 }
 

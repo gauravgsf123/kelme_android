@@ -9,4 +9,5 @@ data class ChatMembersDetails(
     var memberId: String?= " ",
     var memberJoin: Long?= 0,
     var memberLeave: Long?= 0,
+    var allChatDelete: Long?= 0
 ) : Parcelable

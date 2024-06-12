@@ -1,16 +1,26 @@
 package com.kelme.fragment.chat
 
+import android.annotation.SuppressLint
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
+import android.util.DisplayMetrics
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.PopupWindow
+import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -24,16 +34,17 @@ import com.kelme.activity.login.LoginActivity
 import com.kelme.adapter.ChatListAdapter
 import com.kelme.app.BaseFragment
 import com.kelme.databinding.FragmentChatListBinding
+import com.kelme.databinding.PopupDeleteBinding
 import com.kelme.event.CreateChatGroupEvent
+import com.kelme.event.DeleteChatEvent
 import com.kelme.event.SearchChatUserEvent
 import com.kelme.interfaces.ItemClickListener
+import com.kelme.model.ChatMembersDetails
 import com.kelme.model.response.ChatListModelWithName
 import com.kelme.utils.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
-import java.security.Timestamp
-import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
@@ -49,6 +60,9 @@ class ChatListFragment : BaseFragment() {
     var userListClone: ArrayList<String> = ArrayList()
 
     private lateinit var adapter: ChatListAdapter
+    private lateinit var uid:String
+    private lateinit var popupWindow: PopupWindow
+    private lateinit var snackbar: Snackbar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,7 +78,7 @@ class ChatListFragment : BaseFragment() {
 
         setUI()
         setObserver()
-
+        //deleteChat()
         return binding.root
     }
 
@@ -78,7 +92,7 @@ class ChatListFragment : BaseFragment() {
         binding.tvNoChat.visibility = View.GONE
         ProgressDialog.showProgressBar(requireContext())
         ProgressDialog.setCancelable()
-        val uid = PrefManager.read(PrefManager.FCM_USER_ID, "")
+        uid = PrefManager.read(PrefManager.FCM_USER_ID, "")
         val query = instance.getReference("conversations").orderByChild("chatMembers/${uid}").equalTo(true)
         val valueEventListener: ValueEventListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -131,7 +145,11 @@ class ChatListFragment : BaseFragment() {
                         val handler = Handler()
                         handler.postDelayed({
                             userList.sortWith(compareByDescending { it?.lastUpdate })
-                            adapter.updateItems(userList)
+                            val filterUserList = filterChatList(userList)
+                            userList.clear()
+                            userList.addAll(filterUserList)
+                            //adapter.updateItems(filterChatList(userList),false)
+                            adapter.updateItems(userList,false)
                             val gson = Gson()
                             val json = gson.toJson(userList)
                             Log.d("json_data",json)
@@ -186,12 +204,24 @@ class ChatListFragment : BaseFragment() {
         val lastUpdate = userSnapshot.child("lastUpdate").getValue(Long::class.java)
 //        PrefManager.write("lastUpdate", lastUpdate!!)
         val members = userSnapshot.child("chatMembers")
+        val chatMembersDetail = userSnapshot.child("chatMembersDetails")
         val chatMembers: HashMap<String, Boolean> = HashMap()
+        val chatMembersDetails: HashMap<String, ChatMembersDetails> = HashMap()
         for (s in members.children) {
             chatMembers[s.key!!] = s.value!! as Boolean
         }
+        for (s in chatMembersDetail.children) {
+            //val obj1 = ChatMembersDetails()
+            //val allChatDelete = s.child(s.key!!).child("allChatDelete").value
+            //Log.d(TAG, "allChatDelete: $allChatDelete")
+            /*val allChatDelete = s.getValue(ChatMembersDetails::class.java)
+            val gson = Gson().toJson(allChatDelete)
+            Log.d(TAG, "collectUserListData: $gson ")*/
+            chatMembersDetails[s.key!!] = s.getValue(ChatMembersDetails::class.java) as ChatMembersDetails
+        }
+        val allChatDelete = chatMembersDetail.child(uid).child("allChatDelete").value
         temp.chatId = chatId.toString()
-        Log.d(TAG, "collectUserListData: "+chatId.toString())
+        Log.d(TAG, "collectUserListData: $allChatDelete "+chatId.toString())
         temp.chatPic = chatPic.toString()
         temp.chatLastMessage = chatLastMessage.toString()
         temp.chatTitle = chatTitle.toString()
@@ -200,6 +230,7 @@ class ChatListFragment : BaseFragment() {
         temp.createrId = createrId.toString()
         temp.lastUpdate = lastUpdate
         temp.chatMembers = chatMembers
+        temp.chatMemberDetails = chatMembersDetails
         userList.add(temp)
     }
 
@@ -247,6 +278,7 @@ class ChatListFragment : BaseFragment() {
             showAddChatGroupIcon()
             changeSearchBarBackground()
             showOrHideCount()
+            showDeleteChatIcon()
         }
     }
 
@@ -305,6 +337,26 @@ class ChatListFragment : BaseFragment() {
                 startActivity(intent)
             }
         })
+    }
+
+    @SuppressLint("SuspiciousIndentation")
+    private fun filterChatList(userList: ArrayList<ChatListModelWithName?>):ArrayList<ChatListModelWithName?>{
+        val filterChatList = ArrayList<ChatListModelWithName?>()
+        userList.forEach {model->
+            val allChatDeleteTimestamp = model?.chatMemberDetails?.get(uid)?.allChatDelete
+                if(allChatDeleteTimestamp!=null && allChatDeleteTimestamp>0){
+                    allChatDeleteTimestamp?.let {
+                        if(allChatDeleteTimestamp!! >=model.lastUpdate!!){
+                            Log.d("filterChatList","01 $allChatDeleteTimestamp ${model.lastUpdate}")
+                        }else{
+                            filterChatList.add(model)
+                        }
+                    }
+                }else{
+                    filterChatList.add(model)
+                }
+            }
+        return filterChatList
     }
 
     private fun getUserName(position: Int) {
@@ -369,14 +421,21 @@ class ChatListFragment : BaseFragment() {
         (activity as DashboardActivity?)?.run {
             setTitle("Chats")
             hideAddChatGroupIcon()
+            hideDeleteChatIcon()
             resetSearchBarBackground()
         }
+        if(this::snackbar.isInitialized) snackbar.dismiss()
         EventBus.getDefault().unregister(this)
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onMessageEvent(event: CreateChatGroupEvent?) {
         createChatGroup()
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onMessageEvent(event: DeleteChatEvent?) {
+        deleteChatGroup()
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -391,4 +450,99 @@ class ChatListFragment : BaseFragment() {
     private fun createChatGroup() {
         (activity as DashboardActivity).replaceFragment(CreateChatGroupFragment(), Bundle.EMPTY)
     }
+
+    private fun deleteChatGroup(){
+        adapter.updateItems(userList,true)
+        showDeleteOption()
+    }
+
+    @SuppressLint("RestrictedApi", "MissingInflatedId")
+    private fun showDeleteOption(){
+        var selectAll = false
+        snackbar = binding.containerLayout?.let { Snackbar.make(it, "", Snackbar.LENGTH_INDEFINITE) }!!
+
+        val customSnackView: View = layoutInflater.inflate(R.layout.custom_snackbar_view, null)
+
+        snackbar?.view?.setBackgroundColor(Color.TRANSPARENT)
+
+        val snackbarLayout = snackbar!!.view as Snackbar.SnackbarLayout
+
+        snackbarLayout.setPadding(0, 0, 0, 0)
+
+        val tvCancel = customSnackView.findViewById<TextView>(R.id.tvCancel)
+        val ivSelectAll = customSnackView.findViewById<ImageView>(R.id.ivSelectAll)
+        val ivDelete = customSnackView.findViewById<ImageView>(R.id.ivDelete)
+        tvCancel.setOnClickListener {
+            adapter.updateItems(userList,false)
+            snackbar.dismiss()
+        }
+        ivDelete.setOnClickListener {
+            val checkedItems = adapter.getSelectedItem()
+            if(checkedItems.isEmpty()){
+                Toast.makeText(requireContext(),"No selected item", Toast.LENGTH_LONG).show()
+            }else{
+                val gson = Gson().toJson(checkedItems)
+                Log.d("gson","$gson")
+                popupDelete(binding.root,checkedItems)
+                snackbar.dismiss()
+            }
+        }
+        ivSelectAll.setOnClickListener {
+            if(selectAll) {
+                adapter.updateItems(userList, true, false)
+                selectAll = false
+            } else {
+                adapter.updateItems(userList, true, true)
+                selectAll = true
+            }
+        }
+
+        snackbarLayout.addView(customSnackView, 0)
+        snackbar.show()
+    }
+
+    private fun popupDelete(view: View?, checkedItems: ArrayList<ChatListModelWithName>) {
+        // inflate the layout of the popup window
+        val inflater = requireContext().getSystemService(AppCompatActivity.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val popupBinding: PopupDeleteBinding =
+            DataBindingUtil.inflate(inflater, R.layout.popup_delete, null, false)
+        val displayMetrics = DisplayMetrics()
+        requireActivity().windowManager.defaultDisplay.getMetrics(displayMetrics)
+        val height = displayMetrics.heightPixels
+        val width = displayMetrics.widthPixels
+        // create the popup window
+
+        val focusable = true // lets taps outside the popup also dismiss it
+        popupWindow = PopupWindow(popupBinding.root, width, height, focusable)
+        popupWindow.showAtLocation(view, Gravity.END, 0, 0)
+
+        popupBinding.btnNo.setOnClickListener {
+            adapter.updateItems(userList,false)
+            popupWindow.dismiss()
+        }
+
+        popupBinding.btnYes.setOnClickListener {
+            adapter.updateItems(userList,false)
+            deleteChat(checkedItems)
+            popupWindow.dismiss()
+
+        }
+
+    }
+
+
+    @SuppressLint("SuspiciousIndentation")
+    private fun deleteChat(checkedItems: ArrayList<ChatListModelWithName>) {
+        val uid = PrefManager.read(PrefManager.FCM_USER_ID, "")
+        checkedItems.forEach {
+            val currentTimestamp = System.currentTimeMillis()
+            val dbLastUpdates = FirebaseDatabase.getInstance().getReference("conversations").child(it.chatId)
+            dbLastUpdates.child("lastUpdate").setValue(currentTimestamp)
+            dbLastUpdates.child("chatLastMessage").setValue("")
+            dbLastUpdates.child("chatMembersDetails").child(uid).child("allChatDelete").setValue(currentTimestamp)
+            dbLastUpdates.child("lastUpdates").child(uid).setValue(currentTimestamp)
+        }
+
+    }
+
 }

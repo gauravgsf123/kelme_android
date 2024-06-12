@@ -2,6 +2,7 @@ package com.kelme.adapter
 
 import android.content.Context
 import android.text.format.DateUtils
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +15,7 @@ import com.kelme.databinding.ItemChatListBinding
 import com.kelme.interfaces.ItemClickListener
 import com.kelme.model.response.ChatListModelWithName
 import com.kelme.utils.Constants
+import com.kelme.utils.PrefManager
 import com.kelme.utils.Utils
 import java.text.SimpleDateFormat
 import java.util.*
@@ -84,7 +86,7 @@ class ChatListAdapter(
         }
 
         fun bind(modal: ChatListModelWithName, isDelete: Boolean, selectAll: Boolean) {
-
+            val uid = PrefManager.read(PrefManager.FCM_USER_ID, "")
             if (modal.chatType == "single") {
                 binding?.tvName?.text = modal.name
             } else {
@@ -101,6 +103,7 @@ class ChatListAdapter(
             }else{
                 binding?.tvUnseenMsgCounter?.visibility=View.INVISIBLE
             }
+
 
 
 

@@ -66,6 +66,7 @@ object PrefManager {
     const val FCM_TOKEN: String = "fcmToken"
     const val DEVICE_ID: String = "deviceId"
     const val FCM_USER_ID: String = "fcmUserid"
+    const val ALL_CHAT_DELETE: String = "all_chat_delete"
 
     const val FCM_CHAT_ID: String = "fcmChatid"
     const val SEARCH_CHAT_ID: String = "searchChatId"
