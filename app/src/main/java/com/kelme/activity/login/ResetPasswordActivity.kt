@@ -4,7 +4,11 @@ package com.kelme.activity.login
 import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
+import android.text.method.HideReturnsTransformationMethod
+import android.text.method.PasswordTransformationMethod
 import android.view.View
+import android.widget.EditText
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
@@ -79,6 +83,14 @@ class ResetPasswordActivity : BaseActivity() {
             }
         }
 
+        binding.ivNewPassword.setOnClickListener {
+            showHidePassword(binding.etNewPassword,binding.ivNewPassword)
+        }
+
+        binding.ivConfirmPassword.setOnClickListener {
+            showHidePassword(binding.etConfirmPassword,binding.ivConfirmPassword)
+        }
+
     }
 
     private fun setObserver() {
@@ -103,6 +115,8 @@ class ResetPasswordActivity : BaseActivity() {
                     ProgressDialog.hideProgressBar()
                     binding.etNewPassword.visibility = View.VISIBLE
                     binding.etConfirmPassword.visibility = View.VISIBLE
+                    binding.ivNewPassword.visibility = View.VISIBLE
+                    binding.ivConfirmPassword.visibility = View.VISIBLE
                     binding.btnSubmit.text = resources.getString(R.string.reset_password)
                 }
                 is Resource.Loading -> {
@@ -114,6 +128,16 @@ class ResetPasswordActivity : BaseActivity() {
             }
         })
 
+    }
+
+    private fun showHidePassword(editText: EditText,imageView: ImageView){
+        if (editText.transformationMethod.equals(PasswordTransformationMethod.getInstance())) {
+            imageView.setImageResource(R.drawable.show_password)
+            editText.transformationMethod = HideReturnsTransformationMethod.getInstance()
+        } else {
+            imageView.setImageResource(R.drawable.hide_password)
+            editText.transformationMethod = PasswordTransformationMethod.getInstance()
+        }
     }
 
     private fun verifyOtp() {

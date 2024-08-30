@@ -49,7 +49,9 @@ private const val REQUEST_CODE_GALLERY = 102
 private const val REQUEST_CODE_CAMERA_PROFILE = 103
 private const val REQUEST_CODE_GALLERY_PROFILE = 104
 private lateinit var filePhoto: File
-private const val FILE_NAME = "photo.jpg"
+private const val FILE_NAME_PHOTO = "photo"
+private lateinit var fileDocument: File
+private const val FILE_NAME_DOCUMENT = "photo"
 
 class EditProfileFragment : BaseFragment(), CallUpdateProfile, View.OnClickListener,
     BottomSheetOptionsForProfileImageFragment.ItemClickListener,
@@ -443,9 +445,9 @@ class EditProfileFragment : BaseFragment(), CallUpdateProfile, View.OnClickListe
 
     private fun openCamera() {
         val takePhotoIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        filePhoto = getPhotoFile(FILE_NAME)
+        fileDocument = getPhotoFile(FILE_NAME_DOCUMENT)
         val providerFile =
-            FileProvider.getUriForFile(requireContext(), "com.kelme.fileprovider", filePhoto)
+            FileProvider.getUriForFile(requireContext(), "com.kelme.fileprovider", fileDocument)
         takePhotoIntent.putExtra(MediaStore.EXTRA_OUTPUT, providerFile)
         if (context?.let { takePhotoIntent.resolveActivity(it.packageManager) } != null) {
             startActivityForResult(takePhotoIntent, REQUEST_CODE_CAMERA)
@@ -456,7 +458,7 @@ class EditProfileFragment : BaseFragment(), CallUpdateProfile, View.OnClickListe
 
     private fun openCameraProfile() {
         val takePhotoIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        filePhoto = getPhotoFile(FILE_NAME)
+        filePhoto = getPhotoFile(FILE_NAME_PHOTO)
         val providerFile =
             FileProvider.getUriForFile(requireContext(), "com.kelme.fileprovider", filePhoto)
         takePhotoIntent.putExtra(MediaStore.EXTRA_OUTPUT, providerFile)
@@ -524,42 +526,37 @@ class EditProfileFragment : BaseFragment(), CallUpdateProfile, View.OnClickListe
             val takenPhoto = BitmapFactory.decodeFile(filePhoto.absolutePath)
             //viewImage.setImageBitmap(takenPhoto)
             filePathProfile = filePhoto.absolutePath
-            uploadDocument()
-
-        } else {
-            super.onActivityResult(requestCode, resultCode, dataa)
-        }
-        if (requestCode == REQUEST_CODE_CAMERA && resultCode == Activity.RESULT_OK) {
-            val takenPhoto = BitmapFactory.decodeFile(filePhoto.absolutePath)
-            //viewImage.setImageBitmap(takenPhoto)
-            filePath = filePhoto.absolutePath
             Glide
                 .with(this)
                 .load(takenPhoto)
                 .into(binding.profileImage)
 
-        } else {
-            super.onActivityResult(requestCode, resultCode, dataa)
-        }
-        if (requestCode == REQUEST_CODE_GALLERY_PROFILE && resultCode == Activity.RESULT_OK) {
+        } else if (requestCode == REQUEST_CODE_CAMERA && resultCode == Activity.RESULT_OK) {
+            val takenPhoto = BitmapFactory.decodeFile(fileDocument.absolutePath)
+            //viewImage.setImageBitmap(takenPhoto)
+            filePath = fileDocument.absolutePath
+            uploadDocument()
+
+        } else if (requestCode == REQUEST_CODE_GALLERY_PROFILE && resultCode == Activity.RESULT_OK) {
             val takenPhoto = BitmapFactory.decodeFile(filePhoto.absolutePath)
             //viewImage.setImageBitmap(takenPhoto)
             filePathProfile = filePhoto.absolutePath
-            uploadDocument()
-        } else {
-            super.onActivityResult(requestCode, resultCode, dataa)
-        }
-        if (requestCode == REQUEST_CODE_GALLERY && resultCode == Activity.RESULT_OK) {
+            Glide
+                .with(this)
+                .load(dataa?.data)
+                .into(binding.profileImage)
+
+        } else if (requestCode == REQUEST_CODE_GALLERY && resultCode == Activity.RESULT_OK) {
             //viewImage.setImageURI(data?.data)
             val imagePath = getRealPathFromURI(dataa?.data)//data?.data?.path!!
             if (imagePath != null) {
                 filePath = imagePath
             }
+            uploadDocument()
 
-            Glide
-                .with(this)
-                    .load(dataa?.data)
-                    .into(binding.profileImage)
+
+        } else {
+            super.onActivityResult(requestCode, resultCode, dataa)
         }
     }
 
@@ -619,11 +616,11 @@ class EditProfileFragment : BaseFragment(), CallUpdateProfile, View.OnClickListe
     }
 
     private fun uploadDocument() {
-        Log.d("uploadDocument", filePathProfile)
+        Log.d("uploadDocument", filePath)
         var file: File? = null
         var filePart: MultipartBody.Part? = null
-        if (filePathProfile != "") {
-            file = File(filePathProfile)
+        if (filePath != "") {
+            file = File(filePath)
             filePart = MultipartBody.Part.createFormData(
                 "my_doc",
                 file.name,
@@ -633,7 +630,7 @@ class EditProfileFragment : BaseFragment(), CallUpdateProfile, View.OnClickListe
         if (filePart != null) {
             myProfileViewModel.uploadDocument(
                 filePart,
-                file?.name?.let { getPart(it) },
+                file?.name?.let { getPart(it) }
             )
         }
     }

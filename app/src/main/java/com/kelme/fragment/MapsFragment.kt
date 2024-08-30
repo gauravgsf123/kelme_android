@@ -1,6 +1,7 @@
 package com.kelme.fragment
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -64,6 +65,8 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickList
 
    // private lateinit var mapRipple: MapRipple
     private lateinit var marker:Marker
+    private lateinit var userMarker:Marker
+    //private lateinit var userMarker:MarkerOptions
     private var firsttime="0"
     private val TAG = MapsFragment::class.java.simpleName
     private lateinit var binding: FragmentMapsBinding
@@ -96,19 +99,20 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickList
         return binding.root
     }
 
-//    private fun addCustomMarker() {
-//        Log.d(TAG, "addCustomMarker()")
-//        if (map == null) {
-//            return
-//        }
-//
-//        // adding a marker on map with image from drawable
-//        map.addMarker(
-//            MarkerOptions()
-//                .position(0.0)
-//                .icon(BitmapDescriptorFactory.fromBitmap(getMarkerBitmapFromView(R.drawable.app_icon)!!))
-//        )
-//    }
+    @SuppressLint("SuspiciousIndentation")
+    private fun addCustomMarker(latlng: LatLng) {
+        Log.d(TAG, "addCustomMarker")
+        if (this::userMarker.isInitialized)
+        userMarker.remove()
+        // adding a marker on map with image from drawable
+        val inflater = requireActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val view = inflater.inflate(R.layout.view_marker, null)
+        userMarker = map.addMarker(
+            MarkerOptions()
+                .position(latlng)
+                .icon(BitmapDescriptorFactory.fromBitmap(getMarkerBitmapFromView(view)))
+        )!!
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -245,7 +249,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickList
                     .getString(R.string.style_json)
             )
         )
-        map.isMyLocationEnabled = true
+        //map.isMyLocationEnabled = true
 
         val locationManager =
             requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
@@ -277,8 +281,10 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickList
                 .bearing(360f) // Sets the orientation of the camera to North
                 .tilt(40f) // Sets the tilt of the camera to 30 degrees
                 .build() // Creates a CameraPosition from the builder
-            map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
+            //map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
             map.setOnMarkerClickListener(this)
+            //map.uiSettings.setAllGesturesEnabled(false);
+
 
             nearbyAlert()
         } else {
@@ -287,6 +293,8 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickList
                 (activity as DashboardActivity).setLocationCallback(this)
             }
         }
+
+        (activity as DashboardActivity).setLocationCallback(this)
     }
 
     private fun createMarker(
@@ -1289,8 +1297,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickList
         }
         else
         {
-            val inflater = requireActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-            val mCustomMarkerView = inflater.inflate(R.layout.view_marker, null)
+
 
             Glide.with(this)
                 .asBitmap()
@@ -1301,25 +1308,28 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickList
                         resource: Bitmap,
                         transition: Transition<in Bitmap?>?
                     ) {
-                         marker = map.addMarker(
-                             MarkerOptions()
-                                 .position(LatLng(latitude, longitude))
-                                 .icon(BitmapDescriptorFactory.fromBitmap(getMarkerBitmapFromView(mCustomMarkerView, resource)))
-                                 .anchor(0.5f, 0.5f)
-                                 .title(title)
-                                 .snippet(snippet)
-                         )!!
-                        marker.tag = position.toString()
-                       
+
+
                     }
                 })
+
+
+            marker = map.addMarker(
+                MarkerOptions()
+                    .position(LatLng(latitude, longitude))
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.img_minimalrisk_crime))
+                    .anchor(0.5f, 0.5f)
+                    .title(title)
+                    .snippet(snippet)
+            )!!
+            marker.tag = position.toString()
             return marker
         }
     }
 
-    private fun getMarkerBitmapFromView(view: View, bitmap: Bitmap): Bitmap {
-        val item: CircleImageView = view.findViewById(R.id.map_photo) as CircleImageView
-        item.setImageBitmap(bitmap)
+    private fun getMarkerBitmapFromView(view: View): Bitmap {
+        val item: CircleImageView = view.findViewById(R.id.map_photo)
+        item.setImageDrawable(resources.getDrawable(R.drawable.user))
         view.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
         view.layout(0, 0, view.measuredWidth, view.measuredHeight)
         view.buildDrawingCache()
@@ -1508,7 +1518,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickList
         }
         else
         {
-            val request = NearByRequest(latitude, longitude)
+            val request = NearByRequest(latitude, longitude,PrefManager.read(PrefManager.COUNTRY_ID,""))
             viewModal.nearbyAlerts(request)
             firsttime="1"
         }
@@ -1524,7 +1534,8 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickList
         {
             val request = NearByRequest(
                 latitude,
-                longitude
+                longitude,
+                PrefManager.read(PrefManager.COUNTRY_ID,"")
             )
             viewModal.nearbyTracking(request)
         }
@@ -1532,11 +1543,11 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickList
 
     override fun onLocationSuccess(latlng: LatLng)
     {
-        map.animateCamera(
+        /*map.animateCamera(
             CameraUpdateFactory.newLatLngZoom(
                 latlng, 35f
             )
-        )
+        )*/
         val cameraPosition = CameraPosition.Builder()
             .target(
                 latlng
@@ -1546,8 +1557,11 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickList
             .tilt(40f) // Sets the tilt of the camera to 30 degrees
             .build() // Creates a CameraPosition from the builder
 
-        map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
+        //map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
         map.setOnMarkerClickListener(this)
+
+
+        addCustomMarker(latlng)
 
         if(firsttime.equals("0"))
         {

@@ -77,10 +77,10 @@ class LoginActivity : BaseActivity() {
             val message=binding.etPassword.text.toString()
             if(message.trim().isNotEmpty()) {
                 if (binding.etPassword.transformationMethod.equals(PasswordTransformationMethod.getInstance())) {
-                    binding.ivPassword.setImageResource(R.drawable.hide_password)
+                    binding.ivPassword.setImageResource(R.drawable.show_password)
                     binding.etPassword.transformationMethod = HideReturnsTransformationMethod.getInstance()
                 } else {
-                    binding.ivPassword.setImageResource(R.drawable.show_password)
+                    binding.ivPassword.setImageResource(R.drawable.hide_password)
                     binding.etPassword.transformationMethod = PasswordTransformationMethod.getInstance()
                 }
             }

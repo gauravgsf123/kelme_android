@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Patterns
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -79,11 +80,11 @@ class ForgotPasswordActivity : BaseActivity() {
                 }
                 is Resource.Error -> {
                     ProgressDialog.hideProgressBar()
-//                    Toast.makeText(
-//                        applicationContext,
-//                        response.message,
-//                        Toast.LENGTH_SHORT
-//                    ).show()
+                    Toast.makeText(
+                        applicationContext,
+                        response.message,
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
         })

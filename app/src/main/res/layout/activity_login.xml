@@ -136,7 +136,7 @@
                 app:layout_constraintBottom_toBottomOf="@+id/etPassword"
                 app:layout_constraintEnd_toEndOf="@+id/etPassword"
                 app:layout_constraintTop_toTopOf="@+id/etPassword"
-                app:srcCompat="@drawable/show_password" />
+                app:srcCompat="@drawable/hide_password" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
