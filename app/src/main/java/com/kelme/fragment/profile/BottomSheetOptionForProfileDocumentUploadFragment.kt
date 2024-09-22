@@ -42,6 +42,7 @@ class BottomSheetOptionForProfileDocumentUploadFragment : BottomSheetDialogFragm
 
         binding.tvOpenDocument.setOnClickListener {
             dismissAllowingStateLoss()
+            mListener?.onItemClick("open_document")
         }
     }
 

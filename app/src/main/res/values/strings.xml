@@ -347,5 +347,6 @@
     <string name="disclaimer">Disclaimer</string>
     <string name="disclaimer_message"><![CDATA[Krisk24 collects location data to enable user tracking for emergency response, check-in, location based alerts for safety & awareness of the users even when the app is closed or not in use.]]></string>
     <string name="dont_allow">Don\'t Allow</string>
+    <string name="document">Document</string>
 
 </resources>

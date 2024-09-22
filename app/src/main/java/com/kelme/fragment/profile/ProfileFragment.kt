@@ -132,6 +132,11 @@ class ProfileFragment : BaseFragment() {
                         } else {
                             binding.profileImage.setBackgroundResource(R.drawable.user)
                         }
+                        if (response.data.document_id != "") {
+                            Glide.with(this).load(response.data.document_id).into(binding.ivDocument)
+                        } else {
+                            binding.profileImage.setBackgroundResource(R.drawable.alerts)
+                        }
 
                         setDataInFirebase(myProfileData)
                     }

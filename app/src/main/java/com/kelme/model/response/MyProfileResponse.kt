@@ -21,6 +21,7 @@ data class MyProfileData(
     val email: String?,
     val gender: String?,
     val image: String?,
+    val document_id: String?,
     val name: String?,
     val phone_number: String?,
     val role: String?,

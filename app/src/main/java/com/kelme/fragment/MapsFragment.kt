@@ -284,7 +284,10 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickList
             //map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
             map.setOnMarkerClickListener(this)
             //map.uiSettings.setAllGesturesEnabled(false);
-
+            addCustomMarker(LatLng(
+                location.latitude,
+                location.longitude
+            ))
 
             nearbyAlert()
         } else {
@@ -1558,7 +1561,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickList
             .build() // Creates a CameraPosition from the builder
 
         //map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
-        map.setOnMarkerClickListener(this)
+        //map.setOnMarkerClickListener(this)
 
 
         addCustomMarker(latlng)

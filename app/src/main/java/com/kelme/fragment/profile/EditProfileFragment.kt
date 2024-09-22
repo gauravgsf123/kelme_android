@@ -6,9 +6,9 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.database.Cursor
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
@@ -23,6 +23,7 @@ import androidx.core.content.FileProvider
 import androidx.core.content.PermissionChecker.checkSelfPermission
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.kelme.R
 import com.kelme.activity.dashboard.DashboardActivity
@@ -36,6 +37,13 @@ import com.kelme.model.request.DeleteDocumentRequest
 import com.kelme.model.response.DocumentData
 import com.kelme.model.response.MyProfileData
 import com.kelme.utils.*
+import id.zelory.compressor.constraint.size
+import id.zelory.compressor.Compressor
+import id.zelory.compressor.constraint.destination
+import id.zelory.compressor.constraint.format
+import id.zelory.compressor.constraint.quality
+import id.zelory.compressor.constraint.resolution
+import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -48,6 +56,7 @@ private const val REQUEST_CODE_CAMERA = 101
 private const val REQUEST_CODE_GALLERY = 102
 private const val REQUEST_CODE_CAMERA_PROFILE = 103
 private const val REQUEST_CODE_GALLERY_PROFILE = 104
+private const val REQUEST_CODE_DOC = 105
 private lateinit var filePhoto: File
 private const val FILE_NAME_PHOTO = "photo"
 private lateinit var fileDocument: File
@@ -62,6 +71,7 @@ class EditProfileFragment : BaseFragment(), CallUpdateProfile, View.OnClickListe
     private lateinit var myProfileData: MyProfileData
     private var gender = 0
     private lateinit var myProfileViewModel: MyProfileViewModel
+    private var compressedImage: File? = null
     private var filePath: String = ""
     private var filePathProfile: String = ""
     private var isDocumentUpload = false
@@ -421,21 +431,10 @@ class EditProfileFragment : BaseFragment(), CallUpdateProfile, View.OnClickListe
                 }
             }
             "open_gallery" -> {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    if (context?.let {
-                            checkSelfPermission(
-                                it,
-                                Manifest.permission.READ_EXTERNAL_STORAGE
-                            )
-                        } == PackageManager.PERMISSION_DENIED) {
-                        val permissions = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
-                        requestPermissions(permissions, STORAGE_PERMISION)
-                    } else {
-                        chooseImageGallery();
-                    }
-                } else {
-                    chooseImageGallery();
-                }
+                chooseImageGallery()
+            }
+            "open_document" -> {
+                chooseDocument()
             }
             else -> {
                 //Handle data
@@ -485,6 +484,11 @@ class EditProfileFragment : BaseFragment(), CallUpdateProfile, View.OnClickListe
         val intent = Intent(Intent.ACTION_PICK)
         intent.type = "image/*"
         startActivityForResult(intent, REQUEST_CODE_GALLERY)
+        //var chooseFile = Intent(Intent.ACTION_GET_CONTENT)
+        //chooseFile.type = "*/*"
+        /*chooseFile.type = "application/pdf"
+        chooseFile = Intent.createChooser(chooseFile, "Choose a file")
+        startActivityForResult(chooseFile, REQUEST_CODE_DOC)*/
     }
 
     companion object {
@@ -521,53 +525,109 @@ class EditProfileFragment : BaseFragment(), CallUpdateProfile, View.OnClickListe
         return File.createTempFile(fileName, ".jpg", directoryStorage)
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, dataa: Intent?) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == REQUEST_CODE_CAMERA_PROFILE && resultCode == Activity.RESULT_OK) {
-            val takenPhoto = BitmapFactory.decodeFile(filePhoto.absolutePath)
             //viewImage.setImageBitmap(takenPhoto)
-            filePathProfile = filePhoto.absolutePath
-            Glide
-                .with(this)
-                .load(takenPhoto)
-                .into(binding.profileImage)
+            customProfileCompressImage(filePhoto)
+
 
         } else if (requestCode == REQUEST_CODE_CAMERA && resultCode == Activity.RESULT_OK) {
-            val takenPhoto = BitmapFactory.decodeFile(fileDocument.absolutePath)
             //viewImage.setImageBitmap(takenPhoto)
-            filePath = fileDocument.absolutePath
-            uploadDocument()
+            customDocumentCompressImage(fileDocument)
+            //val takenPhoto = BitmapFactory.decodeFile(compressedImage!!.absolutePath)
+            //filePath = compressedImage!!.absolutePath
+            //uploadDocument()
 
         } else if (requestCode == REQUEST_CODE_GALLERY_PROFILE && resultCode == Activity.RESULT_OK) {
-            val takenPhoto = BitmapFactory.decodeFile(filePhoto.absolutePath)
+            //val takenPhoto = BitmapFactory.decodeFile(filePhoto.absolutePath)
             //viewImage.setImageBitmap(takenPhoto)
-            filePathProfile = filePhoto.absolutePath
+            val imagePath = getRealPathFromURI(data?.data)//filePhoto.absolutePath
+
+            if (imagePath != null) {
+                filePathProfile = imagePath
+            }
             Glide
                 .with(this)
-                .load(dataa?.data)
+                .load(data?.data)
                 .into(binding.profileImage)
 
         } else if (requestCode == REQUEST_CODE_GALLERY && resultCode == Activity.RESULT_OK) {
             //viewImage.setImageURI(data?.data)
-            val imagePath = getRealPathFromURI(dataa?.data)//data?.data?.path!!
+            val imagePath = getRealPathFromURI(data?.data)//data?.data?.path!!
             if (imagePath != null) {
                 filePath = imagePath
+                uploadDocument()
             }
-            uploadDocument()
+
+
+
+        }else if (requestCode == REQUEST_CODE_DOC && resultCode == Activity.RESULT_OK) {
+            //viewImage.setImageURI(data?.data)
+            Log.d("uploadDocument", data?.data.toString())
+            val documentPath = FilePath.getPath(requireContext(),data?.data)//getRealPathOfDocumentFromUri(requireContext(),data?.data)//data?.data?.path!!
+            if (documentPath != null) {
+                filePath = documentPath
+                uploadDocument()
+            }else{
+                Log.d("uploadDocument","file not found")
+            }
+
 
 
         } else {
-            super.onActivityResult(requestCode, resultCode, dataa)
+            super.onActivityResult(requestCode, resultCode, data)
         }
     }
 
-    private fun getRealPathFromURI(context: Context, contentUri: Uri?): String? {
+    private fun customProfileCompressImage(actualImage: File) {
+        actualImage.let { imageFile ->
+            lifecycleScope.launch {
+                val compressedImage = Compressor.compress(requireContext(), imageFile) {
+                    resolution(640, 480)
+                    val destination = File(imageFile.parent, imageFile.name.toLowerCase())
+                    destination(destination)
+                    quality(50)
+                    format(Bitmap.CompressFormat.JPEG)
+                    size(180_152) // 1 MB
+                }
+
+                val takenPhoto = BitmapFactory.decodeFile(compressedImage.absolutePath)
+                filePathProfile = compressedImage.absolutePath
+                Glide
+                    .with(requireActivity())
+                    .load(takenPhoto)
+                    .into(binding.profileImage)
+            }
+
+        }
+    }
+    private fun customDocumentCompressImage(actualImage: File) {
+        actualImage.let { imageFile ->
+            lifecycleScope.launch {
+                 compressedImage = Compressor.compress(requireContext(), imageFile) {
+                    resolution(640, 480)
+                    val destination = File(imageFile.parent, imageFile.name.toLowerCase())
+                    destination(destination)
+                    quality(50)
+                    format(Bitmap.CompressFormat.JPEG)
+                    size(180_152) // 1 MB
+                }
+
+                filePath = compressedImage!!.absolutePath
+                uploadDocument()
+            }
+
+        }
+    }
+
+    private fun getRealPathOfDocumentFromUri(context: Context, contentUri: Uri?): String? {
         var cursor: Cursor? = null
         return try {
             val proj = arrayOf(MediaStore.Images.Media.DATA)
-            cursor = contentUri?.let { context.contentResolver.query(it, proj, null, null, null) }
-            val column_index: Int = (cursor?.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
-                ?: cursor?.moveToFirst()) as Int
-            cursor?.getString(column_index)
+            cursor = context.contentResolver.query(contentUri!!, proj, null, null, null)
+            cursor?.moveToFirst()
+            val columnIndex = cursor!!.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+            cursor.getString(columnIndex)
         } finally {
             cursor?.close()
         }
@@ -644,8 +704,8 @@ class EditProfileFragment : BaseFragment(), CallUpdateProfile, View.OnClickListe
         checkGender()
         val builder = MultipartBody.Builder()
         builder.setType(MultipartBody.FORM)
-        if (filePath != "") {
-            val file = File(filePath)
+        if (filePathProfile != "") {
+            val file = File(filePathProfile)
             builder.addFormDataPart(
                 "profile_pic",
                 file.name,
@@ -682,38 +742,7 @@ class EditProfileFragment : BaseFragment(), CallUpdateProfile, View.OnClickListe
                 }
             }
             "open_gallery" -> {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    if (context?.let {
-                            checkSelfPermission(
-                                it,
-                                Manifest.permission.READ_EXTERNAL_STORAGE
-                            )
-                        } == PackageManager.PERMISSION_DENIED) {
-                        val permissions = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
-                        requestPermissions(permissions, STORAGE_PERMISION)
-                    } else {
-                        chooseImageGalleryProfile();
-                    }
-                } else {
-                    chooseImageGalleryProfile();
-                }
-            }
-            "open_document" -> {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    if (context?.let {
-                            checkSelfPermission(
-                                it,
-                                Manifest.permission.READ_EXTERNAL_STORAGE
-                            )
-                        } == PackageManager.PERMISSION_DENIED) {
-                        val permissions = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
-                        requestPermissions(permissions, STORAGE_PERMISION)
-                    } else {
-                        chooseDocument()
-                    }
-                } else {
-                    chooseDocument()
-                }
+                chooseImageGalleryProfile();
             }
         }
     }
