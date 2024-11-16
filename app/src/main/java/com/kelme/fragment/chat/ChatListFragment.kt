@@ -96,6 +96,7 @@ class ChatListFragment : BaseFragment() {
         val query = instance.getReference("conversations").orderByChild("chatMembers/${uid}").equalTo(true)
         val valueEventListener: ValueEventListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
+                ProgressDialog.hideProgressBar()
                 userListClone.clear()
                 userList.clear()
                 if (dataSnapshot.exists()) {
@@ -154,23 +155,18 @@ class ChatListFragment : BaseFragment() {
                             val json = gson.toJson(userList)
                             Log.d("json_data",json)
                             goToChatPage()
-                        }, 1500)
-                        ProgressDialog.hideProgressBar()
+                        }, 1000)
 
                         if (userList.size > 0) {
-                            ProgressDialog.hideProgressBar()
                             binding.tvNoChat.visibility = View.GONE
                         } else {
-                            ProgressDialog.hideProgressBar()
                             binding.tvNoChat.visibility = View.VISIBLE
                         }
 
                     } else {
-                        ProgressDialog.hideProgressBar()
                         binding.tvNoChat.visibility = View.VISIBLE
                     }
                 } else {
-                    ProgressDialog.hideProgressBar()
                     binding.tvNoChat.visibility = View.VISIBLE
                 }
             }
@@ -254,7 +250,7 @@ class ChatListFragment : BaseFragment() {
                         chatListModelWithName?.chatPic = profileImage
 
                     } else {
-                        binding.tvNoChat.visibility = View.VISIBLE
+                        //binding.tvNoChat.visibility = View.VISIBLE
                     }
                 }
 

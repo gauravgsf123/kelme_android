@@ -18,6 +18,7 @@ import com.kelme.databinding.FragmentProfileBinding
 import com.kelme.model.response.DocumentData
 import com.kelme.model.response.MyProfileData
 import com.kelme.utils.*
+import java.util.Locale
 
 class ProfileFragment : BaseFragment() {
 
@@ -43,13 +44,20 @@ class ProfileFragment : BaseFragment() {
 
     private fun init()
     {
+        binding.ivDocument.setOnClickListener {
+            val intent = Intent(context, ImagePreviewActivity::class.java)
+            intent.putExtra(Constants.DOCUMENT_TYPE, myProfileData.document_id?.let { it1 -> getExt(it1) })
+            intent.putExtra(Constants.DOCUMENT_URL,myProfileData.document_id)
+            startActivity(intent)
+        }
         binding.rvDocument.adapter = DocumentListMyProfileAdapter().apply {
             imageViewClick = { item ->
                 val bundle = Bundle()
                 bundle.putParcelable(Constants.DOCUMENT_DATA, item)
 
                 val intent = Intent(context, ImagePreviewActivity::class.java)
-                intent.putExtra(Constants.DATA, item)
+                intent.putExtra(Constants.DOCUMENT_TYPE, getExt(item.document))
+                intent.putExtra(Constants.DOCUMENT_URL,item.document)
                 startActivity(intent)
             }
             downloadClick = { item ->
@@ -57,6 +65,12 @@ class ProfileFragment : BaseFragment() {
                 asyncTasks.execute(item.document)
             }
         }
+    }
+
+    fun getExt(filePath: String): String? {
+        val strLength = filePath.lastIndexOf(".")
+        if (strLength > 0) return filePath.substring(strLength + 1).lowercase(Locale.getDefault())
+        return null
     }
 
     private fun setObserver() {
@@ -133,7 +147,10 @@ class ProfileFragment : BaseFragment() {
                             binding.profileImage.setBackgroundResource(R.drawable.user)
                         }
                         if (response.data.document_id != "") {
-                            Glide.with(this).load(response.data.document_id).into(binding.ivDocument)
+                            val ext = getExt(response.data.document_id!!)
+                            if(ext.equals("pdf"))
+                            Glide.with(this).load(R.drawable.pdf_icon).into(binding.ivDocument)
+                            else Glide.with(this).load(response.data.document_id).into(binding.ivDocument)
                         } else {
                             binding.profileImage.setBackgroundResource(R.drawable.alerts)
                         }

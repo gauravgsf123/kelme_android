@@ -25,7 +25,8 @@ data class MyProfileData(
     val name: String?,
     val phone_number: String?,
     val role: String?,
-    val user_id: String?
+    val user_id: String?,
+    val document_thumbnail: String?
 ):Parcelable
 
 @Parcelize

@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
 import android.text.method.HideReturnsTransformationMethod
@@ -12,6 +13,7 @@ import android.text.method.PasswordTransformationMethod
 import android.util.Log
 import android.util.Patterns
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
@@ -43,6 +45,12 @@ class LoginActivity : BaseActivity() {
         Manifest.permission.RECORD_AUDIO
     )
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    private val PERMISSION_PUSH = arrayOf(
+        Manifest.permission.POST_NOTIFICATIONS
+    )
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -57,7 +65,7 @@ class LoginActivity : BaseActivity() {
 //            Log.e(TAG, ">>>>> user is logged in ")
 //            //auth.signOut()
 //        }
-        if (!PermissionUtil.hasPermissions(this, *PERMISSIONS)) requestPermission(this)
+        if (!PermissionUtil.hasPermissions(this, *PERMISSIONS)) requestPermission(this,PERMISSIONS,Constants.PERMISSIONS_REQUEST_CODE)
         setUi()
         setObserver()
     }
@@ -291,11 +299,11 @@ class LoginActivity : BaseActivity() {
             }
     }
 
-    private fun requestPermission(activity: Activity) {
+    private fun requestPermission(activity: Activity, permissions:  Array<String>,requestCode:Int) {
         ActivityCompat.requestPermissions(
             activity,
-            PERMISSIONS,
-            Constants.PERMISSIONS_REQUEST_CODE
+            permissions,
+            requestCode
         )
     }
 
@@ -312,10 +320,12 @@ class LoginActivity : BaseActivity() {
                     res = false
                 }
             }
-            if (res) {
+            @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+            if (!PermissionUtil.hasPermissions(this, *PERMISSION_PUSH)) requestPermission(this,PERMISSION_PUSH,Constants.REQUEST_CODE_PUSH_NOTIFICATION)
+            /*if (res) {
             } else {
                 //finish()
-            }
+            }*/
         }
     }
 }

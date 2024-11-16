@@ -567,7 +567,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService()
             val name: CharSequence = getString(R.string.app_name)
             val importance = NotificationManager.IMPORTANCE_HIGH
             val channel = NotificationChannel(CHANNEL_ID, name, importance)
-            Log.e(TAG, "sendNotification: Here" )
+            Log.e(TAG, "sendNotification: Here 01 $title $messageBody" )
             channel.description = messageBody
             channel.lockscreenVisibility = Notification.VISIBILITY_PUBLIC
             // do something for phones running an SDK before oreo
@@ -598,6 +598,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService()
             )
         } else {
             // do something for phones running an SDK before oreo
+            Log.e(TAG, "sendNotification: Here 02 $title $messageBody" )
             notificationBuilder =
                 NotificationCompat.Builder(this, CHANNEL_ID)
                     .setSmallIcon(R.drawable.kelme_app_logo) // Small Icon

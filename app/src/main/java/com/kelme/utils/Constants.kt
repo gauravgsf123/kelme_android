@@ -42,15 +42,18 @@ object Constants {
     const val OTP = "otp"
     const val EMAIL = "email"
     const val PASSWORD = "password"
+    const val DOCUMENT_URL = "document_url"
+    const val DOCUMENT_TYPE = "document_type"
     var userName = "user_name"
 
     var userList: ArrayList<ContactModel?> = ArrayList()
 
-    const val PERMISSIONS_REQUEST_CODE_DEMO = 11
+    const val PERMISSIONS_REQUEST_CODE_DEMO = 9
     const val PERMISSIONS_REQUEST_CODE = 10
     const val REQUEST_CODE_LOCATION = 11
     const val REQUEST_CODE_ADDRESS = 12
     const val REQUEST_CODE_COUNTRY = 13
+    const val REQUEST_CODE_PUSH_NOTIFICATION = 14
     const val CAMERA_PERMISION = 1000;
     const val STORAGE_PERMISION = 1001;
     var globalChatCount:Int = 0
