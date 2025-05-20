@@ -36,7 +36,6 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="com.kelme.permission.MAPS_RECEIVE" />
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <queries>
         <intent>
@@ -73,8 +72,10 @@
         android:usesCleartextTraffic="true">
         <activity
             android:name=".EmergencyAlertActivity"
-            android:launchMode="singleInstance"
-            android:exported="false" />
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:showOnLockScreen="true"/>
         <activity
             android:name=".activity.chat.UserDetailsActivity"
             android:exported="false" />
@@ -116,14 +117,15 @@
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
             </intent-filter>
-        </activity> <!-- <receiver -->
-        <!-- android:name=".services.BootDeviceReceivers" -->
-        <!-- android:enabled="true" -->
-        <!-- android:exported="true"> -->
-        <!-- <intent-filter> -->
-        <!-- <action android:name="android.intent.action.BOOT_COMPLETED" /> -->
-        <!-- </intent-filter> -->
-        <!-- </receiver> -->
+        </activity>
+         <receiver
+             android:name=".services.BootDeviceReceivers"
+             android:enabled="true"
+             android:exported="true">
+             <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+             </intent-filter>
+         </receiver>
         <service
             android:name=".services.LocationService"
             android:enabled="true"
@@ -184,10 +186,8 @@
 
         <receiver
             android:name=".MyBroadcastReceiver"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
-            </intent-filter>
+            android:exported="true"
+            android:enabled="true">
         </receiver>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
@@ -264,10 +264,14 @@
         </service>
 
         <service android:name=".services.HeadsUpNotificationService" /> <!-- <meta-data -->
+        <service android:name=".services.SirenNotificationService" />
 
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/kelme_app_logo" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="@string/default_notification_channel_id" />
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.kelme.fileprovider"

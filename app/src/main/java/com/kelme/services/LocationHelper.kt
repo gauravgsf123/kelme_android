@@ -29,7 +29,7 @@ class LocationHelper() {
             }
         }
         locationRequest = LocationRequest.create().apply {
-            interval = 60000/*TimeUnit.SECONDS.toMillis(2)*/
+            interval = 60000*20/*TimeUnit.SECONDS.toMillis(2)*/
             fastestInterval = 60000*20/*TimeUnit.SECONDS.toMillis(2)*/
             //maxWaitTime = 60000/*TimeUnit.MINUTES.toMillis(1)*/
             // priority = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY

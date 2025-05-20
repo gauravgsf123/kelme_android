@@ -30,7 +30,7 @@ class PdfViewActivity : AppCompatActivity() {
 
         val urls = getIntent().getStringExtra("url");
 
-        pdfView = findViewById(R.id.idPDFView)
+        //pdfView = findViewById(R.id.idPDFView)
        // RetrivePdfStream().execute(urls)
     }
 

@@ -1,5 +1,6 @@
 package com.kelme;
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -11,8 +12,10 @@ import android.widget.Toast;
 import com.kelme.utils.PrefManager;
 
 public class MyBroadcastReceiver extends BroadcastReceiver {
+
     @Override
     public void onReceive(Context context, Intent intent) {
+        Log.e("MyBroadcastReceiver", "onCreate: page num .....$startPageNumber");
         Intent i = new Intent(context,EmergencyAlertActivity.class);
         i.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         context.startActivity(i);

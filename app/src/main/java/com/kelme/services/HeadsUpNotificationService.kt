@@ -25,7 +25,6 @@ class HeadsUpNotificationService : Service() {
         return null
     }
 
-    @SuppressLint("RemoteViewLayout")
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
 
         Log.d("service","onStartCommand")
@@ -44,7 +43,7 @@ class HeadsUpNotificationService : Service() {
         var notification: Notification? = null
 
 //        val voipresponse = intent?.getParcelableExtra<VoipNotificationResponse>(Constants.FIREBASE_RESPONSE)!!
-        var callerType = if(data?.call_type==Constants.CallType.AUDIO){
+        val callerType = if(data?.call_type==Constants.CallType.AUDIO){
             "Audio"
         }else "Video"
         val customNotificationView = RemoteViews(packageName, R.layout.custom_notification_small)
@@ -71,8 +70,8 @@ class HeadsUpNotificationService : Service() {
         customNotificationView.setOnClickPendingIntent(R.id.fb_end_call, pendingIntentEnd)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val NOTIFICATION_CHANNEL_ID = "com.currency.usdtoinr"
-            val channelName = "My Background Service"
+            val NOTIFICATION_CHANNEL_ID = CHANNEL_ID
+            val channelName = CHANNEL_NAME
             var chan: NotificationChannel? = null
             chan = NotificationChannel(
                 NOTIFICATION_CHANNEL_ID,

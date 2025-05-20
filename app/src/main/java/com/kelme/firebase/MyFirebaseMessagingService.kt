@@ -11,6 +11,7 @@ import android.content.Intent
 import android.content.Intent.*
 import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.media.AudioAttributes
 import android.media.AudioManager
 import android.media.MediaPlayer
 import android.media.RingtoneManager
@@ -36,10 +37,12 @@ import com.kelme.event.CallRejectEventVideo
 import com.kelme.model.NotificationResponse
 import com.kelme.model.VoipNotificationResponse
 import com.kelme.services.HeadsUpNotificationService
+import com.kelme.services.SirenNotificationService
 import com.kelme.utils.Constants
 import com.kelme.utils.PrefManager
 import com.kelme.utils.Ringtone
 import org.greenrobot.eventbus.EventBus
+import org.json.JSONObject
 import java.io.StringReader
 
 class MyFirebaseMessagingService : FirebaseMessagingService()
@@ -53,22 +56,38 @@ class MyFirebaseMessagingService : FirebaseMessagingService()
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
+        //Ringtone.playSiren(this)
+        Log.e(TAG, "onMessageReceived 01 ${remoteMessage.data}")
+        val json = (remoteMessage.data as Map<String, String>?)?.let { JSONObject(it).toString() }
+        val data = Gson().fromJson(
+            json,
+            VoipNotificationResponse::class.java
+        )
+        Log.e(TAG, "onMessageReceived 02 $data")
 
-            if(remoteMessage.data["details"]!=null){
+            //if(data.receiver_id!=null){
                 try {
-                    val gson = Gson()
-                    val data = gson.fromJson(
-                        remoteMessage.data["details"],
-                        VoipNotificationResponse::class.java
-                    )
+
+
                     if (data.call_type != null) {
+                        //Ringtone.playSiren(this)
                         callNotificationType(data)
+                    }else if(remoteMessage.data["chatId"]!=null){
+                        try {
+                            val chatid = remoteMessage.data["chatId"].toString()
+                            val body = remoteMessage.data["body"].toString()
+                            val title = remoteMessage.data["title"].toString()
+                            val intent = Intent(this, DashboardActivity::class.java)
+                            intent.flags = FLAG_ACTIVITY_NEW_TASK
+                            intent.putExtra("value", "2") // 2 for chat notification to move chat fragment
+                            intent.action = "data"
+                            intent.putExtra("chatId", chatid)
+                            sendNotification(intent, title, body, "chat", "", chatid)
+                        }catch (e:Exception) {
+                            e.printStackTrace()
+                        }
                     } else {
-                        val gson = Gson()
-                        val data = gson.fromJson(
-                            remoteMessage.data["details"],
-                            NotificationResponse::class.java)
-                        //callNotificationType(data)
+                        val data = Gson().fromJson(json, NotificationResponse::class.java)
                         when (data.notification_type) {
                             "15" -> {
                                 PrefManager.write(PrefManager.FROMNOTIFICATION, "1")
@@ -106,21 +125,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService()
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
-            }else{
-                try {
-                    val chatid = remoteMessage.data["chatId"].toString()
-                    val body = remoteMessage.data["body"].toString()
-                    val title = remoteMessage.data["title"].toString()
-                    val intent = Intent(this, DashboardActivity::class.java)
-                    intent.flags = FLAG_ACTIVITY_NEW_TASK
-                    intent.putExtra("value", "2") // 2 for chat notification to move chat fragment
-                    intent.action = "data"
-                    intent.putExtra("chatId", chatid)
-                    sendNotification(intent, title, body, "chat", "", chatid)
-                }catch (e:Exception) {
-                    e.printStackTrace()
-                }
-            }
 
 
     }
@@ -161,10 +165,11 @@ class MyFirebaseMessagingService : FirebaseMessagingService()
     private fun callNotificationType(data: VoipNotificationResponse)
     {
         when (data.notification_type){
-            Constants.NotificationType.EMERGENCY_BUTTON_ACTIVATION, Constants.NotificationType.CHECK_IN,
+            /*Constants.NotificationType.EMERGENCY_BUTTON_ACTIVATION, Constants.NotificationType.CHECK_IN,
             Constants.NotificationType.PUBLICATION_OF_A_SECURITY_ALERT, Constants.NotificationType.PUBLICATION_OF_A_VARIOUS_TYPE_OF_REPORTS,
             Constants.NotificationType.PUBLICATION_OF_A_VARIOUS_TYPE_OF_NOTIFICATION, Constants.NotificationType.GEOFENCE_ALERTS,
             Constants.NotificationType.SAFETY_CHECK -> {
+                wakeScreen()
             }
 
             Constants.NotificationType.CHAT->{
@@ -173,7 +178,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService()
                     "",
                     "", "", "",""
                 )
-            }
+            }*/
             Constants.NotificationType.CALLING->{
                 wakeScreen()
                 if(data.type == "Call request"){
@@ -531,17 +536,26 @@ class MyFirebaseMessagingService : FirebaseMessagingService()
         chatid: String
     ) {
         if ((notificationType == "15" || notificationType == "6") && PrefManager.read(PrefManager.USER_ID, "it") != currentUser) {
-           // if () {
-                try {
+            Ringtone.playSiren(this)
+                /*try {
                     val r: android.media.Ringtone? = RingtoneManager.getRingtone(
                         applicationContext,
                         Uri.parse("android.resource://" + this.packageName + "/" + R.raw.siren)
                     )
                     r?.play()
+
+                    val soundUri = Uri.parse("android.resource://" + packageName + "/" + R.raw.siren)
+                    val mediaPlayer = MediaPlayer.create(applicationContext, soundUri)
+                    mediaPlayer.start()  // Play sound
+
+                    // Optionally, you can release the MediaPlayer once it's finished
+                    mediaPlayer.setOnCompletionListener {
+                        mediaPlayer.release()
+                    }
+
                 } catch (e: java.lang.Exception) {
                     e.printStackTrace()
-                }
-           // }
+                }*/
         } else {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
                 try {
@@ -566,10 +580,13 @@ class MyFirebaseMessagingService : FirebaseMessagingService()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val name: CharSequence = getString(R.string.app_name)
             val importance = NotificationManager.IMPORTANCE_HIGH
+            val soundUri: Uri = Uri.parse("android.resource://${packageName}/raw/siren")
             val channel = NotificationChannel(CHANNEL_ID, name, importance)
             Log.e(TAG, "sendNotification: Here 01 $title $messageBody" )
             channel.description = messageBody
             channel.lockscreenVisibility = Notification.VISIBILITY_PUBLIC
+            channel.enableLights(true)
+            channel.enableVibration(true)
             // do something for phones running an SDK before oreo
             notificationBuilder =
                 NotificationCompat.Builder(this, CHANNEL_ID)
@@ -585,6 +602,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService()
                     .setStyle(NotificationCompat.BigTextStyle().bigText(messageBody))
                     .setPriority(NotificationCompat.PRIORITY_MAX)
                     .setAutoCancel(true)
+                    .setSound(Uri.parse("android.resource://" + this.packageName + "/" + R.raw.siren))
                     .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                     .setDefaults(Notification.DEFAULT_ALL)
                     .setContentIntent(pendingIntent)
@@ -613,6 +631,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService()
                     .setPriority(NotificationCompat.PRIORITY_MAX)
                     .setStyle(NotificationCompat.BigTextStyle().bigText(messageBody))
                     .setAutoCancel(true)
+                    .setSound(Uri.parse("android.resource://" + this.packageName + "/" + R.raw.siren))
                     .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                     .setDefaults(Notification.DEFAULT_ALL)
                     .setContentIntent(pendingIntent)
@@ -623,9 +642,24 @@ class MyFirebaseMessagingService : FirebaseMessagingService()
 
         if(notificationType=="15" || notificationType=="6") {
             if (PrefManager.read(PrefManager.USER_ID, "it") != currentUser) {
+                wakeScreen()
+                Ringtone.playSiren(applicationContext)
                 val intent1 = Intent()
                 intent1.action = "com.kelme.MY_SIGNAL"
                 sendBroadcast(intent1)
+                /*val openIntent = Intent(this,SirenNotificationService::class.java)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    startForegroundService(openIntent)
+                }else startService(openIntent)*/
+
+                /*val openIntent = Intent(this,HeadsUpNotificationService::class.java)
+                openIntent.putExtra(Constants.CALL_TYPE, "")
+                openIntent.putExtra(Constants.CALL_CHANNEL_NAME,"data.channel_name")
+                openIntent.putExtra(Constants.NOTIFICATION_INTENT_TYPE, Constants.NotificationIntentType.NOTIFICATION)
+                openIntent.putExtra(Constants.FIREBASE_RESPONSE,"data")
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    startForegroundService(openIntent)
+                }else startService(openIntent)*/
             }
         }else if (notificationType=="chat"){
             sendMessageToActivity("2",chatid)

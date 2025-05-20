@@ -13,9 +13,14 @@ import com.kelme.fragment.security.SecurityViewModal
 /**
  * Created by Amit on 28,June,2021
  */
+@Suppress("UNCHECKED_CAST")
 class ViewModalFactory(private val app: Application) : ViewModelProvider.Factory {
 
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+    /*override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+
+    }*/
+
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(LoginViewModal::class.java)) {
             return LoginViewModal(app) as T
         }

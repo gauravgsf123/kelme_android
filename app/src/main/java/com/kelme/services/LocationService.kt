@@ -186,7 +186,7 @@ class LocationService : Service() {
 
                 }
             })
-        return START_STICKY
+        return START_NOT_STICKY
     }
 
     suspend fun trackUser(request: CurrentLocationRequest) =
