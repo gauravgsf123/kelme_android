@@ -129,7 +129,8 @@
         <service
             android:name=".services.LocationService"
             android:enabled="true"
-            android:exported="true" />
+            android:exported="false"
+            android:foregroundServiceType="location"/>
         <service
             android:name=".services.LocationServiceDemo"
             android:enabled="true"
@@ -251,7 +252,7 @@
         <service
             android:name=".firebase.MyFirebaseMessagingService"
             android:enabled="true"
-            android:exported="false"
+            android:exported="true"
             android:permission="com.google.android.c2dm.permission.SEND">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />

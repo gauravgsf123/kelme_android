@@ -146,13 +146,13 @@ class ProfileFragment : BaseFragment() {
                         } else {
                             binding.profileImage.setBackgroundResource(R.drawable.user)
                         }
-                        if (response.data.document_id != "") {
-                            val ext = getExt(response.data.document_id!!)
+                        if (response.data.document_id?.isNotEmpty() == true) {
+                            val ext = getExt(response.data.document_id)
                             if(ext.equals("pdf"))
                             Glide.with(this).load(R.drawable.pdf_icon).into(binding.ivDocument)
                             else Glide.with(this).load(response.data.document_id).into(binding.ivDocument)
                         } else {
-                            binding.profileImage.setBackgroundResource(R.drawable.alerts)
+                            binding.ivDocument.setBackgroundResource(R.drawable.alerts)
                         }
 
                         setDataInFirebase(myProfileData)

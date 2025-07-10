@@ -11,7 +11,7 @@ class BootDeviceReceivers : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         if(PrefManager.read(PrefManager.IS_LOGIN, false)) {
             context?.let {
-                ContextCompat.startForegroundService(it, Intent(it, LocationService::class.java))
+                //ContextCompat.startForegroundService(it, Intent(it, LocationService::class.java))
             }
         }else{
             context?.let {

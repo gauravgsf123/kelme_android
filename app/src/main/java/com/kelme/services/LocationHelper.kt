@@ -4,41 +4,57 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.location.Location
 import android.os.Looper
+import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 
-class LocationHelper() {
-    var LOCATION_REFRESH_TIME = 0 // 3 seconds. The Minimum Time to get location update
-    var LOCATION_REFRESH_DISTANCE = 100 // 0 meters. The Minimum Distance to be changed to get location update
-    var locationRequest:LocationRequest = LocationRequest.create()
+class LocationHelper {
 
+    companion object {
+        private const val LOCATION_INTERVAL: Long = 5 * 60 * 1000 // 20 minutes in milliseconds
+        private const val LOCATION_FASTEST_INTERVAL: Long = 5 * 60 * 1000 // same as interval
+        private const val LOCATION_DISTANCE: Float = 100f // 100 meters
+    }
+
+    private var locationCallback: LocationCallback? = null
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
 
     @SuppressLint("MissingPermission")
-    fun startListeningUserLocation(context: Context, myListener: MyLocationListener) {
-        //val mLocationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
-//        }
-        val locationCallback = object : LocationCallback() {
-            override fun onLocationResult(p0: LocationResult) {
-                for (location in p0.locations){
-                    // Update UI with location data
+    fun startListeningUserLocation(
+        context: Context,
+        myListener: MyLocationListener
+    ) {
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
+
+        val request = LocationRequest.create().apply {
+            interval = LOCATION_INTERVAL
+            fastestInterval = LOCATION_FASTEST_INTERVAL
+            smallestDisplacement = LOCATION_DISTANCE
+            priority = PRIORITY_HIGH_ACCURACY
+        }
+
+        locationCallback = object : LocationCallback() {
+            override fun onLocationResult(result: LocationResult) {
+                result.locations.forEach { location ->
                     myListener.onLocationChanged(location)
                 }
             }
         }
-        locationRequest = LocationRequest.create().apply {
-            interval = 60000*20/*TimeUnit.SECONDS.toMillis(2)*/
-            fastestInterval = 60000*20/*TimeUnit.SECONDS.toMillis(2)*/
-            //maxWaitTime = 60000/*TimeUnit.MINUTES.toMillis(1)*/
-            // priority = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY
-            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-        }
+
         fusedLocationClient.requestLocationUpdates(
-            locationRequest,
-            locationCallback,
-            Looper.getMainLooper())
+            request,
+            locationCallback!!,
+            Looper.getMainLooper()
+        )
+    }
+
+    fun stopLocationUpdates() {
+        locationCallback?.let {
+            fusedLocationClient.removeLocationUpdates(it)
+        }
     }
 }
 

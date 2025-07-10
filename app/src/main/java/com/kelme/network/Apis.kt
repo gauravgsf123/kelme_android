@@ -16,7 +16,7 @@ import retrofit2.http.Part
 
 interface Apis {
     //login view modal
-    @POST("sign_in")
+        @POST("sign_in")
     suspend fun signIn(@Body request: LoginRequest): Response<LoginResponse>
 
     @POST("forget_password")

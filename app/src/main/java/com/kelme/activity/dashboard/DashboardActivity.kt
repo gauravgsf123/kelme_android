@@ -94,6 +94,9 @@ class DashboardActivity : BaseActivity() {
     var mService: LocationService? = null
     // Boolean to check if our activity is bound to service or not
     var mIsBound: Boolean? = null
+    companion object {
+        private const val LOCATION_PERMISSION_REQUEST_CODE = 155
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -151,6 +154,7 @@ class DashboardActivity : BaseActivity() {
         setUI()
         setObserver()
         retrieveChatList()
+        checkService()
     }
 
     private fun checkLocationPermisionGranted():Boolean{
@@ -205,20 +209,21 @@ class DashboardActivity : BaseActivity() {
         )
     }
 
-    private fun requestBackgroundLocationPermission() {
+    private fun requestLocationPermissions() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             ActivityCompat.requestPermissions(
                 this,
                 arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
                     Manifest.permission.ACCESS_BACKGROUND_LOCATION
                 ),
-                156
+                LOCATION_PERMISSION_REQUEST_CODE
             )
         } else {
             ActivityCompat.requestPermissions(
                 this,
                 arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                155
+                LOCATION_PERMISSION_REQUEST_CODE
             )
         }
     }
@@ -226,8 +231,7 @@ class DashboardActivity : BaseActivity() {
     override fun onDestroy() {
         super.onDestroy()
         dialog?.dismiss()
-//        LocalBroadcastManager.getInstance(this)
-//            .unregisterReceiver(broadcastReceiver)
+//        LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver)
     }
 
 
@@ -305,19 +309,18 @@ class DashboardActivity : BaseActivity() {
             enableLocationSettings()
         }
         gotoNotification()
-        //bindService()
-        Handler().postDelayed({
-            //if(!LocationService().isInstanceCreated()){
-            Log.i("isMyServiceRunning","${isMyServiceRunning(LocationService::class.java)}")
-            if(!isMyServiceRunning(LocationService::class.java)){
-                Log.i("isRunning","service not Running")
-                stopLocationService()
-                ContextCompat.startForegroundService(this, Intent(this, LocationService::class.java))
-            }else(
-                    Log.i("isRunning","service is Running")
-                    )
-        }, 2000)
 
+    }
+
+    private fun checkService(){
+        Handler(Looper.getMainLooper()).postDelayed({
+            if (!isMyServiceRunning(LocationService::class.java)) {
+                ContextCompat.startForegroundService(
+                    this,
+                    Intent(this, LocationService::class.java)
+                )
+            }
+        }, 2000)
     }
 
     private val serviceConnection = object : ServiceConnection {
@@ -626,78 +629,29 @@ class DashboardActivity : BaseActivity() {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        var res = true
-        if (requestCode == Constants.PERMISSIONS_REQUEST_CODE && grantResults.isNotEmpty()) {
-            for (result in grantResults) {
-                if (result != PackageManager.PERMISSION_GRANTED) {
-                    res = false
-                }
-            }
-            if (res) {
-                //launch()
-            } else {
-//                Toast.makeText(
-//                    applicationContext,
-//                    "All permissions are required",
-//                    Toast.LENGTH_LONG
-//                ).show()
-                finish()
-            }
-        } else if (requestCode == 155) {
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // permission was granted, yay! Do the
-                // location-related task you need to do.
-                if (ContextCompat.checkSelfPermission(
-                        this,
-                        Manifest.permission.ACCESS_FINE_LOCATION
-                    ) == PackageManager.PERMISSION_GRANTED
+        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
+            if (grantResults.isNotEmpty() && grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
+                if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) ==
+                    PackageManager.PERMISSION_GRANTED
                 ) {
-                    // Now check background location
-                    requestBackgroundLocationPermission()
+                    // All required permissions are granted
+                    checkService()
                 }
-
             } else {
-                // permission denied, boo! Disable the
-                // functionality that depends on this permission.
-                // Check if we are in a state where the user has denied the permission and
-                // selected Don't ask again
-                if (!ActivityCompat.shouldShowRequestPermissionRationale(
-                        this,
-                        Manifest.permission.ACCESS_FINE_LOCATION
-                    )
+                // Check if user denied with "Don't ask again"
+                if (permissions.any { permission ->
+                        !ActivityCompat.shouldShowRequestPermissionRationale(this, permission)
+                    }
                 ) {
+                    // Redirect to app settings
                     startActivity(
                         Intent(
                             Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                            Uri.fromParts("package", this.packageName, null),
-                        ),
+                            Uri.fromParts("package", this.packageName, null)
+                        )
                     )
                 }
             }
-            return
-        } else if (requestCode == 156) {
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                // permission was granted, yay! Do the
-                // location-related task you need to do.
-                if (ContextCompat.checkSelfPermission(
-                        this,
-                        Manifest.permission.ACCESS_FINE_LOCATION
-                    ) == PackageManager.PERMISSION_GRANTED
-                ) {
-                    ContextCompat.startForegroundService(this, Intent(this, LocationService::class.java))
-//                    Toast.makeText(
-//                        this,
-//                        "Granted Background Location Permission",
-//                        Toast.LENGTH_LONG
-//                    ).show()
-                }
-            } else {
-                // permission denied, boo! Disable the
-                // functionality that depends on this permission.
-                // Toast.makeText(this, "permission denied", Toast.LENGTH_LONG).show()
-            }
-            return
         }
     }
 

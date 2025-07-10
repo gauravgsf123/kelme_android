@@ -2,9 +2,15 @@ package com.kelme.activity.dashboard
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Bitmap
 import android.os.AsyncTask
 import android.os.Bundle
 import android.view.View
+import android.webkit.WebResourceError
+import android.webkit.WebResourceRequest
+import android.webkit.WebView
+import android.webkit.WebViewClient
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import com.bumptech.glide.Glide
 
@@ -14,18 +20,13 @@ import com.kelme.databinding.ActivityImagePreviewBinding
 import com.kelme.model.response.DocumentData
 import com.kelme.utils.Constants
 import com.kelme.utils.ProgressDialog
-import java.io.BufferedInputStream
-import java.io.InputStream
-import java.net.HttpURLConnection
-import java.net.URL
-import java.util.Locale
-import javax.net.ssl.HttpsURLConnection
 
 class ImagePreviewActivity : BaseActivity() {
 
     private lateinit var binding: ActivityImagePreviewBinding
     private lateinit var documentData: DocumentData
 
+    @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_image_preview)
@@ -33,12 +34,40 @@ class ImagePreviewActivity : BaseActivity() {
         //documentData = intent.extras?.getParcelable<DocumentData>(Constants.DATA)!!
         val documentType = intent.getStringExtra(Constants.DOCUMENT_TYPE)!!
         val documentUrl = intent.getStringExtra(Constants.DOCUMENT_URL)!!
-        if(documentType.equals("pdf")){
-            //binding.idPDFView.visibility = View.VISIBLE
+        if(documentType == "pdf"){
             binding.imageView.visibility = View.GONE
+            with(binding.webView) {
+                visibility = View.VISIBLE
+                settings.javaScriptEnabled = true
+                webViewClient = object : WebViewClient() {
+                    override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
+                        ProgressDialog.showProgressBar(this@ImagePreviewActivity)
+                        visibility = View.INVISIBLE
+                    }
+
+                    override fun onPageFinished(view: WebView?, url: String?) {
+                        ProgressDialog.hideProgressBar()
+                        visibility = View.VISIBLE
+                    }
+
+                    override fun onReceivedError(
+                        view: WebView?,
+                        request: WebResourceRequest?,
+                        error: WebResourceError?
+                    ) {
+                        ProgressDialog.hideProgressBar()
+                        Toast.makeText(
+                            this@ImagePreviewActivity,
+                            "Failed to load PDF",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+                loadUrl("https://drive.google.com/viewerng/viewer?embedded=true&url=$documentUrl")
+            }
             //RetrievePDFFromURL(binding.idPDFView).execute(documentUrl)
         }else{
-            //binding.idPDFView.visibility = View.GONE
+            binding.webView.visibility = View.GONE
             binding.imageView.visibility = View.VISIBLE
             Glide.with(this).load(documentUrl).into(binding.imageView)
         }
