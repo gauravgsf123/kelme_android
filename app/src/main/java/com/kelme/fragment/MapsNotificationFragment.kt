@@ -83,6 +83,14 @@ class MapsNotificationFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMar
                         bitmapdraw = resources.getDrawable(R.drawable.map_icon_sos) as BitmapDrawable
 
                     }
+                    "5" -> {
+                        bitmapdraw = if(safety=="1") {
+                            resources.getDrawable(R.drawable.map_icon_safety) as BitmapDrawable
+
+                        }else{
+                            resources.getDrawable(R.drawable.map_icon_danger) as BitmapDrawable
+                        }
+                    }
                     "7" -> {
                         bitmapdraw = if(safety=="1") {
                             resources.getDrawable(R.drawable.map_icon_safety) as BitmapDrawable

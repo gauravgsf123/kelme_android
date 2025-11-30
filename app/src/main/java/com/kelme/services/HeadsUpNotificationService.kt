@@ -115,7 +115,8 @@ class HeadsUpNotificationService : Service() {
 
 
 
-            val pi = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT)
+            val pi = PendingIntent.getActivity(this, 0, notificationIntent,
+                PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE)
             mBuilder.setContentIntent(pi)
 
 

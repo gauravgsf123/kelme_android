@@ -16,11 +16,16 @@ import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
+import android.view.WindowManager
 import android.widget.PopupWindow
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.FileProvider
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -88,7 +93,49 @@ class ChatConversationActivity : BaseActivity(), View.OnClickListener, MediaInte
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        //WindowCompat.setDecorFitsSystemWindows(window, false)
+        /*window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_chat_conversion)
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.myToolbar.clHeader) { view, insets ->
+            val statusBarInsets = insets.getInsets(WindowInsetsCompat.Type.statusBars())
+            view.updatePadding(top = statusBarInsets.top)
+            insets
+        }*/
+
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
+
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_chat_conversion)
+
+        val root = binding.root
+        val bottomBar = binding.layoutChatBottom.root     // your include id
+        val recycler = binding.rvChat
+
+        recycler.clipToPadding = false
+
+        ViewCompat.setOnApplyWindowInsetsListener(root) { _, insets ->
+            val ime = insets.getInsets(WindowInsetsCompat.Type.ime())
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+
+            val imeHeight = ime.bottom
+            val navHeight = systemBars.bottom
+
+            // When keyboard opens → push input bar up
+            bottomBar.translationY = -imeHeight.toFloat()
+
+            // Make sure recycler view stays above keyboard
+            recycler.updatePadding(bottom = bottomBar.height + imeHeight)
+
+            insets
+        }
+        val extraTop = resources.getDimensionPixelSize(R.dimen._40sdp) // e.g. 8dp
+        val extraBottom = resources.getDimensionPixelSize(R.dimen._10sdp) // e.g. 8dp
+        binding.myToolbar.clHeader.post {
+            binding.myToolbar.clHeader.updatePadding(top = binding.myToolbar.clHeader.paddingTop + extraTop)
+            binding.myToolbar.clHeader.updatePadding(bottom = binding.myToolbar.clHeader.paddingBottom + extraBottom)
+        }
+
         conversationReference = FirebaseDatabase.getInstance().getReference("conversations")
         chatMessagesReference = FirebaseDatabase.getInstance().getReference("chatMessages")
         dbRef = FirebaseDatabase.getInstance().reference

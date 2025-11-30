@@ -70,7 +70,6 @@
                 android:textSize="@dimen/_12ssp"
                 android:textColor="@color/black"
                 android:padding="@dimen/_8sdp"
-                android:text="Csorrentino_58hw3"
                 android:inputType="text"
                 android:imeOptions="actionDone"
                 android:gravity="center|start"

@@ -4,33 +4,35 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".activity.chat.ChatConversationActivity">
 
-    <RelativeLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <include
             android:id="@+id/my_toolbar"
-            layout="@layout/chat_toolbar" />
+            layout="@layout/chat_toolbar"
+            app:layout_constraintTop_toTopOf="parent"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_chat"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_above="@id/layout_chat_bottom"
-            android:layout_below="@id/my_toolbar"
+            android:layout_height="0dp"
             android:overScrollMode="never"
             android:padding="@dimen/_2sdp"
             android:focusable="false"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:itemCount="5"
-            tools:listitem="@layout/item_chat_text_other" />
+            tools:listitem="@layout/item_chat_text_other"
+            app:layout_constraintTop_toBottomOf="@+id/my_toolbar"
+            app:layout_constraintBottom_toTopOf="@+id/layout_chat_bottom"/>
 
         <include
             android:id="@+id/layout_chat_bottom"
             layout="@layout/chat_layout_bottom"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
+            app:layout_constraintTop_toBottomOf="@+id/rv_chat"
+            app:layout_constraintBottom_toBottomOf="parent"
             android:visibility="visible" />
 
         <include
@@ -41,6 +43,6 @@
             android:visibility="gone"
             android:layout_alignParentBottom="true" />
 
-    </RelativeLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

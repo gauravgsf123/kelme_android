@@ -25,6 +25,8 @@ import com.kelme.model.ContactModel
 import com.kelme.model.ContactUserDetailsModel
 import com.kelme.model.request.ContactListRequest
 import com.kelme.utils.*
+import java.util.Locale
+import java.util.Locale.getDefault
 
 class ContactFragment : Fragment() {
     private lateinit var binding: FragmentContactBinding
@@ -121,7 +123,7 @@ class ContactFragment : Fragment() {
             if (d != null) {
                 try {
                     if(d.name!="") {
-                        if ((d.name!!.toLowerCase()).contains(text.toString())) {
+                        if ((d.name!!.lowercase(getDefault())).contains(text.toString())) {
                             temp.add(d)
                         }
                     }

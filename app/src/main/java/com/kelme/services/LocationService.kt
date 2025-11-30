@@ -6,6 +6,7 @@ import android.app.NotificationManager
 import android.app.Service
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.pm.ServiceInfo
 import android.location.Location
 import android.os.*
 import android.util.Log
@@ -64,7 +65,27 @@ class LocationService : Service() {
             notificationChannel.setSound(null, null)
             notificationManager.createNotificationChannel(notificationChannel)
         }
-        startForeground(1, builder.build())
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) { // API 34+
+            startForeground(
+                1,
+                builder.build(),
+                ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION
+            );
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) { // API 29-33
+            startForeground(
+                1,
+                builder.build(),
+                ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION
+            );
+        } else { // API < 29
+            startForeground(1, builder.build());
+        }
+        /*if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q ){
+            startForeground(1, builder.build(), ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION)
+        } else {
+            startForeground(1, builder.build())
+        }*/
 
 
         Log.d("isRunning","in OnCreate")
@@ -94,7 +115,7 @@ class LocationService : Service() {
                             location.longitude.toString(),
                             System.currentTimeMillis().toString()
                         )
-                        trackUser(request)
+                        //trackUser(request)
                     } else {
                         locationHelper.stopLocationUpdates()
                         stopSelf()

@@ -331,11 +331,12 @@ class CheckInFragment : Fragment(), OnMapReadyCallback,GoogleMap.OnMarkerClickLi
         if (ActivityCompat.checkSelfPermission(
                 requireContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+            ) != PackageManager.PERMISSION_GRANTED
+            && ActivityCompat.checkSelfPermission(
                 requireContext(),
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
-         && ActivityCompat.checkSelfPermission(
+            && ActivityCompat.checkSelfPermission(
                 requireContext(),
                 Manifest.permission.ACCESS_BACKGROUND_LOCATION
             ) != PackageManager.PERMISSION_GRANTED

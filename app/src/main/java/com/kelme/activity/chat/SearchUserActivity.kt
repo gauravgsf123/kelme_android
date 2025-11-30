@@ -7,6 +7,9 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -20,6 +23,8 @@ import com.kelme.model.ContactModel
 import com.kelme.utils.Constants
 import com.kelme.utils.PrefManager
 import com.kelme.utils.ProgressDialog
+import java.util.Locale
+import java.util.Locale.getDefault
 
 class SearchUserActivity : BaseActivity() {
 
@@ -33,6 +38,12 @@ class SearchUserActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this,R.layout.activity_search_user)
+        ViewCompat.setOnApplyWindowInsetsListener(binding.clTop) { v, insets ->
+            val statusBarTop = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
+            // extension from androidx.core.view: updatePadding
+            v.updatePadding(top = statusBarTop)
+            insets
+        }
         setUi()
     }
 
@@ -111,7 +122,7 @@ class SearchUserActivity : BaseActivity() {
             if (d != null) {
                 try {
                     if(d.name!="") {
-                        if ((d.name!!.toLowerCase()).contains(text.toString())) {
+                        if ((d.name!!.lowercase(getDefault())).contains(text.toString())) {
                             temp.add(d)
                         }
                     }

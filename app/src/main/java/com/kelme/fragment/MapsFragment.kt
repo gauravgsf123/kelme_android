@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.PorterDuff
@@ -58,6 +59,8 @@ import de.hdodenhof.circleimageview.CircleImageView
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import java.net.URL
+import androidx.core.graphics.createBitmap
 
 
 class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener,
@@ -102,13 +105,30 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickList
     @SuppressLint("SuspiciousIndentation")
     private fun addCustomMarker(latlng: LatLng) {
         Log.d(TAG, "addCustomMarker")
-        if (this::userMarker.isInitialized)
+        /*if (this::userMarker.isInitialized)
         userMarker.remove()
         // adding a marker on map with image from drawable
         val inflater = requireActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val view = inflater.inflate(R.layout.view_marker, null)
         userMarker = map.addMarker(
             MarkerOptions()
+                .position(latlng)
+                .icon(BitmapDescriptorFactory.fromBitmap(getMarkerBitmapFromView(view)))
+        )!!*/
+
+        if (!isAdded) return
+
+        if (this::userMarker.isInitialized) {
+            userMarker.remove()
+        }
+
+        val inflater = LayoutInflater.from(context) ?: return
+        val view = inflater.inflate(R.layout.view_marker, null)
+
+        userMarker = map.addMarker(
+            MarkerOptions()
+                .title("My Location")
+                .snippet("My Location")
                 .position(latlng)
                 .icon(BitmapDescriptorFactory.fromBitmap(getMarkerBitmapFromView(view)))
         )!!
@@ -119,12 +139,12 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickList
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment?.getMapAsync(this)
 
-//        val url = URL( PrefManager.read(PrefManager.IMAGE, ""))
-//        val bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream())
-//        map.addMarker(
-//            MarkerOptions()
-//                .icon(BitmapDescriptorFactory.fromBitmap(bmp))
-//        )
+        /*val url = URL(PrefManager.read(PrefManager.IMAGE, ""))
+        val bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream())
+        map.addMarker(
+            MarkerOptions()
+                .icon(BitmapDescriptorFactory.fromBitmap(bmp))
+        )*/
 
         mapFragment?.getMapAsync {
             map = it
@@ -149,12 +169,14 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickList
 
             if (type == "1") {
                 map.setInfoWindowAdapter(object : GoogleMap.InfoWindowAdapter {
+                    @SuppressLint("CutPasteId")
                     override fun getInfoWindow(p0: Marker): View? {
                         val view = layoutInflater.inflate(R.layout.map_description_dialog, null)
-                        val tvDescription: RegularTextView =
-                            view.findViewById(R.id.tv_description)
-                        val ivDetails: ImageView =
-                            view.findViewById(R.id.iv_details)
+                        val ivInfo = view.findViewById<ImageView>(R.id.iv_details).also {
+                            it.setImageDrawable(resources.getDrawable(R.drawable.ic_info))
+                        }
+                        val tvDescription: RegularTextView = view.findViewById(R.id.tv_description)
+                        val ivDetails: ImageView = view.findViewById(R.id.iv_details)
                         tvDescription.text = p0.snippet
                         view.setOnClickListener {
 
@@ -169,7 +191,8 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickList
                 })
 
                 map.setOnInfoWindowClickListener { marker ->
-                    if(type=="1") {
+                    marker.title
+                    if(type=="1" && marker.title == "") {
                         val bundle = Bundle()
                         bundle.putString(
                             Constants.SECURITY_ALERT_MODEL,
@@ -181,7 +204,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickList
                         )
                     }else{
                         val intent = Intent(context,UserDetailsActivity::class.java)
-                        intent.putExtra("userId",listNearByTracking[marker.tag.toString().toInt()].firebase_id)
+                        intent.putExtra("userId", PrefManager.read(PrefManager.FCM_USER_ID,""))
                         activity?.startActivity(intent)
                     }
                 }
@@ -191,11 +214,6 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickList
 
     override fun onResume() {
         super.onResume()
-        try {
-            EventBus.getDefault().register(this)
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
         (activity as DashboardActivity?)?.run {
             setTitle("Maps")
             hideNotificationIcon()
@@ -204,13 +222,21 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickList
             hideUnreadCount()
         }
     }
+    override fun onStart() {
+        super.onStart()
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this)
+        }
+    }
 
     override fun onStop() {
         super.onStop()
         (activity as DashboardActivity?)?.run {
             hideMapControl()
         }
-        EventBus.getDefault().unregister(this)
+        if (EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().unregister(this)
+        }
     }
 
     private fun setUI() {
@@ -297,7 +323,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickList
             }
         }
 
-        (activity as DashboardActivity).setLocationCallback(this)
+        //(activity as DashboardActivity).setLocationCallback(this)
     }
 
     private fun createMarker(
@@ -1332,14 +1358,16 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickList
 
     private fun getMarkerBitmapFromView(view: View): Bitmap {
         val item: CircleImageView = view.findViewById(R.id.map_photo)
-        item.setImageDrawable(resources.getDrawable(R.drawable.user))
+        //item.setImageDrawable(resources.getDrawable(R.drawable.user))
+        Glide.with(this)
+            .asBitmap()
+            .placeholder(R.drawable.user)
+            .load(PrefManager.read(PrefManager.IMAGE, ""))
+            .into(item)
         view.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
         view.layout(0, 0, view.measuredWidth, view.measuredHeight)
         view.buildDrawingCache()
-        val returnedBitmap = Bitmap.createBitmap(
-            view.measuredWidth, view.measuredHeight,
-            Bitmap.Config.ARGB_8888
-        )
+        val returnedBitmap = createBitmap(view.measuredWidth, view.measuredHeight)
         val canvas = Canvas(returnedBitmap)
         canvas.drawColor(Color.WHITE, PorterDuff.Mode.SRC_IN)
         val drawable = view.background
@@ -1427,8 +1455,9 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickList
 //                        response.message,
 //                        Toast.LENGTH_SHORT
 //                    ).show()
-                        type = "1"
                         map.clear()
+                        type = "1"
+                        addCustomMarker(LatLng(latitude.toDouble(), longitude.toDouble()))
                         listNearByAlert.clear()
                         listNearByAlert = response.data as ArrayList<NearByAlertsModel>
                         listNearByAlert.forEachIndexed { index, it ->
@@ -1478,6 +1507,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickList
 //                        Toast.LENGTH_SHORT
 //                    ).show()
                         map.clear()
+                        addCustomMarker(LatLng(latitude.toDouble(), longitude.toDouble()))
                         type = "2"
                         listNearByTracking.clear()
                         listNearByTracking = response.data as ArrayList<NearByTrackingModel>
@@ -1514,16 +1544,16 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickList
 
     private fun nearbyAlert()
     {
-        if(latitude == "")
-        {
-//            Toast.makeText(requireContext(), "Could not get your location", Toast.LENGTH_SHORT)
-//                .show()
-        }
-        else
+        if(latitude != "")
         {
             val request = NearByRequest(latitude, longitude,PrefManager.read(PrefManager.COUNTRY_ID,""))
             viewModal.nearbyAlerts(request)
             firsttime="1"
+        }
+        else
+        {
+            //            Toast.makeText(requireContext(), "Could not get your location", Toast.LENGTH_SHORT)
+//                .show()
         }
     }
 
@@ -1564,6 +1594,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickList
         //map.setOnMarkerClickListener(this)
 
 
+        if (!isAdded) return
         addCustomMarker(latlng)
 
         if(firsttime.equals("0"))

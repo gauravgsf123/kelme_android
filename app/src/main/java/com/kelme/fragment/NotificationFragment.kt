@@ -87,7 +87,7 @@ class NotificationFragment : Fragment(), RecyclerItemTouchHelper.RecyclerItemTou
         notificationAdapter.onItemClick(object : ItemClickListener {
             override fun onClick(position: Int, view: View?) {
                 if(view!=null){
-                    if(list[position].module_type=="2"||list[position].module_type=="3"||list[position].module_type=="7") {
+                    if(list[position].module_type=="2"||list[position].module_type=="3"|| list[position].module_type=="5" ||list[position].module_type=="7") {
                         if (list[position].longitude != "" && list[position].latitude != "") {
                             PrefManager.write(PrefManager.NLONGITUDE, list[position].longitude)
                             PrefManager.write(PrefManager.NLATITUDE, list[position].latitude)

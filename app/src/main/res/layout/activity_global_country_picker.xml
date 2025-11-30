@@ -17,7 +17,7 @@
             android:id="@+id/backArrow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_10sdp"
+            android:layout_marginStart="@dimen/_15sdp"
             android:layout_marginEnd="@dimen/_10sdp"
             android:layout_marginTop="@dimen/_15sdp"
             android:src="@drawable/icn_back"
@@ -39,7 +39,8 @@
             android:background="@drawable/bg_stroke_grey"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/backArrow"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="@+id/backArrow"
+            app:layout_constraintBottom_toBottomOf="@+id/backArrow"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvCountry"

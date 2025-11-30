@@ -9,14 +9,13 @@
         android:layout_height="wrap_content"
         android:background="@drawable/dashboard_top_background"
         android:paddingBottom="@dimen/_10sdp"
-        android:paddingTop="@dimen/_10sdp"
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
             android:id="@+id/backArrow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_10sdp"
+            android:layout_marginStart="@dimen/_15sdp"
             android:background="@drawable/icn_back"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"

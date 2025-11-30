@@ -124,7 +124,7 @@ public class LocationServiceDemo extends Service implements GoogleApiClient.Conn
     private void StartForeground() {
         Intent intent = new Intent(context, DashboardActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent, PendingIntent.FLAG_ONE_SHOT);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent, PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE);
 
         String CHANNEL_ID = "channel_location";
         String CHANNEL_NAME = "channel_location";

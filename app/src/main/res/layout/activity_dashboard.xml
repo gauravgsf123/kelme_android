@@ -32,8 +32,8 @@
                     android:id="@+id/menu"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/_20sdp"
-                    android:layout_marginTop="@dimen/_20sdp"
+                    android:layout_marginStart="@dimen/_15sdp"
+                    android:layout_marginTop="@dimen/_15sdp"
                     android:background="@drawable/icn_menu"
                     android:contentDescription="@null"
                     app:layout_constraintLeft_toLeftOf="parent"
@@ -42,18 +42,18 @@
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/backArrow"
-                    android:layout_width="@dimen/_30sdp"
-                    android:layout_height="@dimen/_25sdp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    android:layout_marginStart="@dimen/_20sdp"
-                    android:layout_marginTop="@dimen/_20sdp">
+                    android:layout_marginStart="@dimen/_15sdp"
+                    android:layout_marginTop="@dimen/_15sdp">
 
                     <ImageView
                         android:id="@+id/backArrow1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/icn_back"
+                        android:src="@drawable/icn_back"
                         android:contentDescription="@null"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"

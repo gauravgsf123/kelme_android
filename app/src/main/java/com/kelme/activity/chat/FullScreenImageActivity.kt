@@ -1,5 +1,6 @@
 package com.kelme.activity.chat
 
+import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ImageView
@@ -8,15 +9,27 @@ import com.kelme.R
 import android.view.ScaleGestureDetector
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector.SimpleOnScaleGestureListener
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import com.github.chrisbanes.photoview.PhotoViewAttacher
 
 class FullScreenImageActivity : AppCompatActivity() {
 
     private var mScaleGestureDetector: ScaleGestureDetector? = null
 
+    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_full_screen_image)
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.cl_top)) { v, insets ->
+            val statusBarTop = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
+            // extension from androidx.core.view: updatePadding
+            v.updatePadding(top = statusBarTop)
+            insets
+        }
         val backArrow = findViewById<ImageView>(R.id.backArrow)
 
         mScaleGestureDetector = ScaleGestureDetector(this, ScaleListener())

@@ -45,6 +45,8 @@ class LoginActivity : BaseActivity() {
         Manifest.permission.RECORD_AUDIO
     )
 
+
+
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private val PERMISSION_PUSH = arrayOf(
         Manifest.permission.POST_NOTIFICATIONS
@@ -307,6 +309,7 @@ class LoginActivity : BaseActivity() {
         )
     }
 
+
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -321,12 +324,13 @@ class LoginActivity : BaseActivity() {
                 }
             }
             @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-            if (!PermissionUtil.hasPermissions(this, *PERMISSION_PUSH)) requestPermission(this,PERMISSION_PUSH,Constants.REQUEST_CODE_PUSH_NOTIFICATION)
-            /*if (res) {
-            } else {
-                //finish()
-            }*/
-        }
+            if (!PermissionUtil.hasPermissions(this, *PERMISSION_PUSH))
+                requestPermission(this,PERMISSION_PUSH,Constants.REQUEST_CODE_PUSH_NOTIFICATION)
+        } /*else if(requestCode == Constants.REQUEST_CODE_PUSH_NOTIFICATION && grantResults.isNotEmpty()){
+            @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
+            if (!PermissionUtil.hasPermissions(this, *PERMISION_LOCATION))
+                requestPermission(this,PERMISION_LOCATION,Constants.REQUEST_CODE_LOCATION_PERMISSION)
+        }*/
     }
 }
 

@@ -232,7 +232,8 @@ class MyFirebaseMessagingService : FirebaseMessagingService()
 
     private fun notificationShow(data:VoipNotificationResponse){
         val notificationIntent = Intent(this, DashboardActivity::class.java)
-        val pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0)
+        val pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent,
+            PendingIntent.FLAG_IMMUTABLE)
         var notification: Notification? = null
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -312,7 +313,8 @@ class MyFirebaseMessagingService : FirebaseMessagingService()
         notificationIntent.putExtra(Constants.CALL_CHANNEL_NAME,channelName)
         notificationIntent.putExtra(Constants.NOTIFICATION_INTENT_TYPE, Constants.NotificationIntentType.NOTIFICATION)
         notificationIntent.putExtra(Constants.FIREBASE_RESPONSE,voipNotificationResponse)
-        val pendingIntentReceive: PendingIntent = PendingIntent.getActivity(this, 0, intentReceive, 0)
+        val pendingIntentReceive: PendingIntent = PendingIntent.getActivity(this, 0, intentReceive,
+            PendingIntent.FLAG_IMMUTABLE)
 
         val intentEnd = Intent(this, CallerActivity::class.java).apply {
             flags = FLAG_ACTIVITY_NEW_TASK or FLAG_ACTIVITY_CLEAR_TASK
@@ -322,7 +324,8 @@ class MyFirebaseMessagingService : FirebaseMessagingService()
         notificationIntent.putExtra(Constants.CALL_CHANNEL_NAME,channelName)
         notificationIntent.putExtra(Constants.NOTIFICATION_INTENT_TYPE, Constants.NotificationIntentType.NOTIFICATION)
         notificationIntent.putExtra(Constants.FIREBASE_RESPONSE,voipNotificationResponse)
-        val pendingIntentEnd: PendingIntent = PendingIntent.getActivity(this, 0, intentEnd, 0)
+        val pendingIntentEnd: PendingIntent = PendingIntent.getActivity(this, 0, intentEnd,
+            PendingIntent.FLAG_IMMUTABLE)
 
         customNotificationView.setOnClickPendingIntent(R.id.fb_recive_call, pendingIntentReceive)
         customNotificationView.setOnClickPendingIntent(R.id.fb_recive_call, pendingIntentEnd)
@@ -472,7 +475,8 @@ class MyFirebaseMessagingService : FirebaseMessagingService()
             intentReceive.putExtra(Constants.CALL_TYPE, data.call_type)
             intentReceive.putExtra(Constants.NOTIFICATION_INTENT_TYPE, Constants.NotificationIntentType.RECEIVE)
             intentReceive.putExtra(Constants.FIREBASE_RESPONSE,data)
-            val pendingIntentReceive: PendingIntent = PendingIntent.getActivity(this, 0, intentReceive, 0)
+            val pendingIntentReceive: PendingIntent = PendingIntent.getActivity(this, 0, intentReceive,
+                PendingIntent.FLAG_IMMUTABLE)
 
             val intentEnd = Intent(this, CallerActivity::class.java).apply {
                 flags = FLAG_ACTIVITY_NEW_TASK or FLAG_ACTIVITY_CLEAR_TASK
@@ -481,7 +485,8 @@ class MyFirebaseMessagingService : FirebaseMessagingService()
             intentEnd.putExtra(Constants.CALL_TYPE, data.call_type)
             intentEnd.putExtra(Constants.NOTIFICATION_INTENT_TYPE, Constants.NotificationIntentType.END)
             intentEnd.putExtra(Constants.FIREBASE_RESPONSE,data)
-            val pendingIntentEnd: PendingIntent = PendingIntent.getActivity(this, 0, intentEnd, 0)
+            val pendingIntentEnd: PendingIntent = PendingIntent.getActivity(this, 0, intentEnd,
+                PendingIntent.FLAG_IMMUTABLE)
 
             customNotificationView.setOnClickPendingIntent(R.id.fb_recive_call, pendingIntentReceive)
             customNotificationView.setOnClickPendingIntent(R.id.fb_end_call, pendingIntentEnd)
@@ -680,7 +685,8 @@ class MyFirebaseMessagingService : FirebaseMessagingService()
         intent.putExtra(Constants.NOTIFICATION_INTENT_TYPE, Constants.NotificationIntentType.NOTIFICATION)
         intent.putExtra(Constants.FIREBASE_RESPONSE,data)
 
-        val pendingIntent: PendingIntent = PendingIntent.getActivity(this, 0, intent, 0)
+        val pendingIntent: PendingIntent = PendingIntent.getActivity(this, 0, intent,
+            PendingIntent.FLAG_IMMUTABLE)
 
         val channelId = "Kelme"
         val channelName = "Kelme"
@@ -704,7 +710,8 @@ class MyFirebaseMessagingService : FirebaseMessagingService()
         val bigContent = RemoteViews(packageName, R.layout.custom_notification_small)
 
         val callerIntent = Intent(applicationContext, CallerActivity::class.java)
-        val callerReceive = PendingIntent.getService(applicationContext, 0, callerIntent, 0)
+        val callerReceive = PendingIntent.getService(applicationContext, 0, callerIntent,
+            PendingIntent.FLAG_IMMUTABLE)
 
         val intentReceive = Intent(this, CallerActivity::class.java).apply {
             flags = FLAG_ACTIVITY_NEW_TASK or FLAG_ACTIVITY_CLEAR_TASK
@@ -713,7 +720,8 @@ class MyFirebaseMessagingService : FirebaseMessagingService()
         intentReceive.putExtra(Constants.CALL_TYPE, data.call_type)
         intent.putExtra(Constants.NOTIFICATION_INTENT_TYPE, Constants.NotificationIntentType.RECEIVE)
         intentReceive.putExtra(Constants.FIREBASE_RESPONSE,data)
-        val pendingIntentReceive: PendingIntent = PendingIntent.getActivity(this, 0, intentReceive, 0)
+        val pendingIntentReceive: PendingIntent = PendingIntent.getActivity(this, 0, intentReceive,
+            PendingIntent.FLAG_IMMUTABLE)
 
         val intentEnd = Intent(this, CallerActivity::class.java).apply {
             flags = FLAG_ACTIVITY_NEW_TASK or FLAG_ACTIVITY_CLEAR_TASK
@@ -722,7 +730,8 @@ class MyFirebaseMessagingService : FirebaseMessagingService()
         intentEnd.putExtra(Constants.CALL_TYPE, data.call_type)
         intent.putExtra(Constants.NOTIFICATION_INTENT_TYPE, Constants.NotificationIntentType.END)
         intentEnd.putExtra(Constants.FIREBASE_RESPONSE,data)
-        val pendingIntentEnd: PendingIntent = PendingIntent.getActivity(this, 0, intentEnd, 0)
+        val pendingIntentEnd: PendingIntent = PendingIntent.getActivity(this, 0, intentEnd,
+            PendingIntent.FLAG_IMMUTABLE)
 
         smallContent.setOnClickPendingIntent(R.id.fb_recive_call, pendingIntentReceive)
         smallContent.setOnClickPendingIntent(R.id.fb_end_call, pendingIntentEnd)

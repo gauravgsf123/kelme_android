@@ -20,6 +20,8 @@ import com.kelme.model.ChatMembersDetails
 import com.kelme.model.ContactModel
 import com.kelme.utils.PrefManager
 import com.kelme.utils.ProgressDialog
+import java.util.Locale
+import java.util.Locale.getDefault
 
 class AddNewGroupMemberActivity : BaseActivity(), QuantityListner {
 
@@ -118,7 +120,7 @@ class AddNewGroupMemberActivity : BaseActivity(), QuantityListner {
         temp.clear()
         for (d in userList) {
             if (d != null) {
-                if ((d.name!!.toLowerCase()).contains(text.toString())) {
+                if ((d.name!!.lowercase(getDefault())).contains(text.toString())) {
                     temp.add(d)
                 }
             }

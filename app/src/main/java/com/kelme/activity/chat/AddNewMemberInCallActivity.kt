@@ -23,6 +23,8 @@ import com.kelme.interfaces.QuantityListner
 import com.kelme.model.ContactModel
 import com.kelme.model.request.OtherUserRequestCallRequest
 import com.kelme.utils.*
+import java.util.Locale
+import java.util.Locale.getDefault
 
 class AddNewMemberInCallActivity : BaseActivity(), QuantityListner {
 
@@ -163,7 +165,7 @@ class AddNewMemberInCallActivity : BaseActivity(), QuantityListner {
         temp.clear()
         for (d in userList) {
             if (d != null) {
-                if ((d.name!!.toLowerCase()).contains(text.toString())) {
+                if ((d.name!!.lowercase(getDefault())).contains(text.toString())) {
                     temp.add(d)
                 }
             }

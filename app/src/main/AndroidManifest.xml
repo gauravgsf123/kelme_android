@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="com.kelme">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <permission
         android:name="com.kelme.permission.MAPS_RECEIVE"
@@ -30,12 +29,16 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION"/>
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="com.kelme.permission.MAPS_RECEIVE" />
-    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_REMOTE_MESSAGING"/>
+
 
     <queries>
         <intent>
@@ -60,7 +63,8 @@
 
     <application
         android:name=".app.MyApp"
-        android:allowBackup="true"
+        android:allowBackup="false"
+        android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher_round"
         android:label="@string/app_name"
         android:largeHeap="true"
@@ -130,11 +134,14 @@
             android:name=".services.LocationService"
             android:enabled="true"
             android:exported="false"
-            android:foregroundServiceType="location"/>
+            android:foregroundServiceType="location"
+            android:stopWithTask="true"/>
         <service
             android:name=".services.LocationServiceDemo"
             android:enabled="true"
-            android:exported="true" />
+            android:exported="true"
+            android:foregroundServiceType="location"
+            android:stopWithTask="true"/>
 
         <activity
             android:name=".activity.chat.AudioCallActivity"
@@ -178,7 +185,7 @@
         <activity
             android:name=".activity.chat.ChatConversationActivity"
             android:exported="false"
-            android:screenOrientation="portrait" />
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".activity.MapLocationPickerActivity"
             android:exported="false"
@@ -253,6 +260,7 @@
             android:name=".firebase.MyFirebaseMessagingService"
             android:enabled="true"
             android:exported="true"
+            android:foregroundServiceType="mediaPlayback|remoteMessaging"
             android:permission="com.google.android.c2dm.permission.SEND">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
@@ -264,8 +272,14 @@
                 android:value="@string/default_notification_channel_id"/>
         </service>
 
-        <service android:name=".services.HeadsUpNotificationService" /> <!-- <meta-data -->
-        <service android:name=".services.SirenNotificationService" />
+        <service android:name=".services.HeadsUpNotificationService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="mediaPlayback|remoteMessaging" />
+        <service android:name=".services.SirenNotificationService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="mediaPlayback|remoteMessaging"/>
 
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"

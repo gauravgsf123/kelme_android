@@ -54,6 +54,7 @@ object Constants {
     const val REQUEST_CODE_ADDRESS = 12
     const val REQUEST_CODE_COUNTRY = 13
     const val REQUEST_CODE_PUSH_NOTIFICATION = 14
+    const val REQUEST_CODE_LOCATION_PERMISSION = 15
     const val CAMERA_PERMISION = 1000;
     const val STORAGE_PERMISION = 1001;
     var globalChatCount:Int = 0

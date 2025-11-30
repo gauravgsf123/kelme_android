@@ -21,11 +21,15 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.PopupWindow
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.location.LocationManagerCompat
 import androidx.core.view.GravityCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.databinding.DataBindingUtil
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
@@ -87,10 +91,11 @@ class DashboardActivity : BaseActivity() {
     var unSeenMsgCount = 0
     private var dialog: AlertDialog?=null
     private var myLocationCallback: MyLocationCallback? = null
-    private val PERMISSIONS = arrayOf(
+    /*private val PERMISSIONS = arrayOf(
         Manifest.permission.CAMERA,
-        Manifest.permission.RECORD_AUDIO
-    )
+        Manifest.permission.RECORD_AUDIO,
+        Manifest.permission.ACCESS_FINE_LOCATION
+    )*/
     var mService: LocationService? = null
     // Boolean to check if our activity is bound to service or not
     var mIsBound: Boolean? = null
@@ -98,10 +103,16 @@ class DashboardActivity : BaseActivity() {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 155
     }
 
+    @SuppressLint("UnspecifiedRegisterReceiverFlag")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = DataBindingUtil.setContentView( this, R.layout.activity_dashboard)
+        ViewCompat.setOnApplyWindowInsetsListener(binding.clTop) { v, insets ->
+            val statusBarTop = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
+            v.updatePadding(top = statusBarTop)
+            insets
+        }
         val myList = intent.getSerializableExtra("mylist") as ArrayList<ChatListModelWithName>?
         var startPageNumber =""
         if ( savedInstanceState != null) {
@@ -121,9 +132,22 @@ class DashboardActivity : BaseActivity() {
 
         val intentFilter = IntentFilter()
         intentFilter.addAction( "com.kelme.MY_SIGNAL")
+        //intentFilter.addAction(Intent.ACTION_BATTERY_CHANGED)
 
         val myReceiver = MyBroadcastReceiver()
-        registerReceiver(myReceiver, intentFilter)
+        //registerReceiver(myReceiver, intentFilter)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(
+                myReceiver,
+                intentFilter,
+                Context.RECEIVER_NOT_EXPORTED   // or Context.RECEIVER_NOT_EXPORTED
+            )
+        } else {
+            registerReceiver(
+                myReceiver,
+                intentFilter
+            )
+        }
 
         val mMessageReceiver: BroadcastReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent) {
@@ -146,21 +170,26 @@ class DashboardActivity : BaseActivity() {
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
             IntentFilter("NotificationUpdates"))
 
-        if(!checkLocationPermisionGranted()){
+
+        if(!checkLocationPermissionGranted(Manifest.permission.ACCESS_FINE_LOCATION)){
             showDisclaimer()
         }else{
+            checkService()
             getCurrentLocation()
         }
+
+
+
         setUI()
         setObserver()
         retrieveChatList()
-        checkService()
+
     }
 
-    private fun checkLocationPermisionGranted():Boolean{
+    private fun checkLocationPermissionGranted(permission: String):Boolean{
         return ActivityCompat.checkSelfPermission(
             this,
-            Manifest.permission.ACCESS_FINE_LOCATION
+            permission
         ) == PackageManager.PERMISSION_GRANTED
     }
     private fun checkLocationPermission() {
@@ -185,17 +214,18 @@ class DashboardActivity : BaseActivity() {
                         "OK"
                     ) { _, _ ->
                         //Prompt the user once explanation has been shown
-                        requestLocationPermission()
+                        requestLocationPermissions()
                     }
                     .create()
                     .show()
             } else {
 
                 // No explanation needed, we can request the permission.
-                requestLocationPermission()
+                requestLocationPermissions()
             }
         } else {
             //checkBackgroundLocation()
+
         }
     }
 
@@ -203,29 +233,40 @@ class DashboardActivity : BaseActivity() {
         ActivityCompat.requestPermissions(
             this,
             arrayOf(
-                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_FINE_LOCATION
             ),
-            155
+            LOCATION_PERMISSION_REQUEST_CODE
         )
     }
 
+    /*@RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
+    private fun requestBackgroundLocationPermission() {
+        ActivityCompat.requestPermissions(
+            this,
+            arrayOf(
+                Manifest.permission.FOREGROUND_SERVICE_LOCATION
+            ),
+            FOREGROUND_SERVICE_LOCATION_REQUEST_CODE
+        )
+    }*/
+
     private fun requestLocationPermissions() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {*/
             ActivityCompat.requestPermissions(
                 this,
                 arrayOf(
                     Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_BACKGROUND_LOCATION
+                    Manifest.permission.ACCESS_COARSE_LOCATION
                 ),
                 LOCATION_PERMISSION_REQUEST_CODE
             )
-        } else {
+        /*} else {
             ActivityCompat.requestPermissions(
                 this,
                 arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
                 LOCATION_PERMISSION_REQUEST_CODE
             )
-        }
+        }*/
     }
 
     override fun onDestroy() {
@@ -313,8 +354,15 @@ class DashboardActivity : BaseActivity() {
     }
 
     private fun checkService(){
+        Log.d("checkService", "${isMyServiceRunning(LocationService::class.java)}")
         Handler(Looper.getMainLooper()).postDelayed({
             if (!isMyServiceRunning(LocationService::class.java)) {
+                ContextCompat.startForegroundService(
+                    this,
+                    Intent(this, LocationService::class.java)
+                )
+            }else{
+                stopService(Intent(this,LocationService::class.java))
                 ContextCompat.startForegroundService(
                     this,
                     Intent(this, LocationService::class.java)
@@ -323,7 +371,7 @@ class DashboardActivity : BaseActivity() {
         }, 2000)
     }
 
-    private val serviceConnection = object : ServiceConnection {
+    /*private val serviceConnection = object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName, iBinder: IBinder) {
             Log.d("serviceConnection", "ServiceConnection: connected to service.")
             // We've bound to MyService, cast the IBinder and get MyBinder instance
@@ -337,7 +385,7 @@ class DashboardActivity : BaseActivity() {
             Log.d("serviceConnection", "ServiceConnection: disconnected from service.")
             mIsBound = false
         }
-    }
+    }*/
 
     private fun getRandomNumberFromService() {
         /*mService?.randomNumberLiveData?.observe(this
@@ -346,7 +394,7 @@ class DashboardActivity : BaseActivity() {
             })*/
     }
 
-    private fun bindService() {
+    /*private fun bindService() {
         Intent(this, LocationService::class.java).also { intent ->
             bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
         }
@@ -356,7 +404,7 @@ class DashboardActivity : BaseActivity() {
         Intent(this, LocationService::class.java).also { intent ->
             unbindService(serviceConnection)
         }
-    }
+    }*/
 
     private fun showDisclaimer(){
         var builder = AlertDialog.Builder(this)
@@ -364,7 +412,7 @@ class DashboardActivity : BaseActivity() {
         builder.setMessage(resources.getString(R.string.disclaimer_message))
         builder.setPositiveButton(getString(R.string.ok)) { dialog, i ->
             checkLocationPermission()
-            getCurrentLocation()
+            //getCurrentLocation()
 
             dialog.dismiss()
         }
@@ -615,13 +663,13 @@ class DashboardActivity : BaseActivity() {
     }
 
 
-    private fun requestPermission(activity: Activity) {
+    /*private fun requestPermission(activity: Activity) {
         ActivityCompat.requestPermissions(
             activity,
             PERMISSIONS,
             Constants.PERMISSIONS_REQUEST_CODE
         )
-    }
+    }*/
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -629,30 +677,34 @@ class DashboardActivity : BaseActivity() {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
-            if (grantResults.isNotEmpty() && grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
-                if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) ==
-                    PackageManager.PERMISSION_GRANTED
-                ) {
-                    // All required permissions are granted
-                    checkService()
-                }
-            } else {
-                // Check if user denied with "Don't ask again"
-                if (permissions.any { permission ->
-                        !ActivityCompat.shouldShowRequestPermissionRationale(this, permission)
+            if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
+                if (grantResults.isNotEmpty() && grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
+                    if (ContextCompat.checkSelfPermission(
+                            this,
+                            Manifest.permission.ACCESS_FINE_LOCATION
+                        ) ==
+                        PackageManager.PERMISSION_GRANTED
+                    ) {
+                        // All required permissions are granted
+                        checkService()
                     }
-                ) {
-                    // Redirect to app settings
-                    startActivity(
-                        Intent(
-                            Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                            Uri.fromParts("package", this.packageName, null)
+                }else {
+                    // Check if user denied with "Don't ask again"
+                    if (permissions.any { permission ->
+                            !ActivityCompat.shouldShowRequestPermissionRationale(this, permission)
+                        }
+                    ) {
+                        // Redirect to app settings
+                        startActivity(
+                            Intent(
+                                Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                                Uri.fromParts("package", this.packageName, null)
+                            )
                         )
-                    )
+                    }
                 }
             }
-        }
+
     }
 
     fun vibratePhone() {

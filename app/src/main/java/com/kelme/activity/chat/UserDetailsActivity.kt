@@ -4,6 +4,10 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.kelme.R
@@ -34,14 +38,21 @@ class UserDetailsActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        //WindowCompat.setDecorFitsSystemWindows(window, true)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_user_details)
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.clTop) { v, insets ->
+            val statusBarTop = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
+            // extension from androidx.core.view: updatePadding
+            v.updatePadding(top = statusBarTop)
+            insets
+        }
 
         viewModal =
             ViewModelProvider(this, ViewModalFactory(application)).get(CountryViewModal::class.java)
 
         userId = intent.getStringExtra("userId").toString()
-
+        binding.ivChat.visibility = if (userId == PrefManager.read(PrefManager.FCM_USER_ID, "")) View.GONE else View.VISIBLE
         onClickMethod()
         getUserDetails()
         setObserver()

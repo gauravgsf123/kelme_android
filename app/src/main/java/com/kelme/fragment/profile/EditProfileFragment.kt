@@ -51,6 +51,8 @@ import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import java.io.File
+import java.util.Locale
+import java.util.Locale.getDefault
 
 private const val REQUEST_CODE_CAMERA = 101
 private const val REQUEST_CODE_GALLERY = 102
@@ -584,7 +586,7 @@ class EditProfileFragment : BaseFragment(), CallUpdateProfile, View.OnClickListe
             lifecycleScope.launch {
                 val compressedImage = Compressor.compress(requireContext(), imageFile) {
                     resolution(640, 480)
-                    val destination = File(imageFile.parent, imageFile.name.toLowerCase())
+                    val destination = File(imageFile.parent, imageFile.name.lowercase(getDefault()))
                     destination(destination)
                     quality(50)
                     format(Bitmap.CompressFormat.JPEG)
@@ -606,7 +608,7 @@ class EditProfileFragment : BaseFragment(), CallUpdateProfile, View.OnClickListe
             lifecycleScope.launch {
                  compressedImage = Compressor.compress(requireContext(), imageFile) {
                     resolution(640, 480)
-                    val destination = File(imageFile.parent, imageFile.name.toLowerCase())
+                    val destination = File(imageFile.parent, imageFile.name.lowercase(getDefault()))
                     destination(destination)
                     quality(50)
                     format(Bitmap.CompressFormat.JPEG)
