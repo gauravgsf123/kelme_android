@@ -175,6 +175,9 @@ class ContactFragment : Fragment() {
                         activity?.finish()
                     }
                 }
+                else -> {
+                    ProgressDialog.hideProgressBar()
+                }
             }
         }
 
@@ -204,6 +207,9 @@ class ContactFragment : Fragment() {
 //                            Toast.LENGTH_SHORT
 //                        ).show()
                     }
+                }
+                else -> {
+                    ProgressDialog.hideProgressBar()
                 }
             }
         }

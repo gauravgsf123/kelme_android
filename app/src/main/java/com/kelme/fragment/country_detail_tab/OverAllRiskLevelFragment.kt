@@ -149,6 +149,9 @@ class OverAllRiskLevelFragment : BaseFragment(), View.OnClickListener {
                         activity?.finish()
                     }
                 }
+                else -> {
+                    ProgressDialog.hideProgressBar()
+                }
             }
         }
 
@@ -177,6 +180,9 @@ class OverAllRiskLevelFragment : BaseFragment(), View.OnClickListener {
 //                            Toast.LENGTH_SHORT
 //                        ).show()
                     }
+                }
+                else -> {
+                    ProgressDialog.hideProgressBar()
                 }
             }
         }

@@ -87,13 +87,13 @@ class VideoCallActivity : BaseActivity(),GroupVideoCallAdapter.OnItemClick, View
         override fun onUserOffline(uid: Int, reason: Int) {
             runOnUiThread {
                 Log.d(TAG, "onUserOffline:UID  $uid")
-                    if(videoIdList.size>1) {
-                        videoIdList.remove(uid)
-                        groupCallAdapter.updateGroupCallItems(videoIdList, mRtcEngine!!)
-                    }
-                    else {
-                        onRemoteUserLeft(uid)
-                    }
+                if(videoIdList.size>1) {
+                    videoIdList.remove(uid)
+                    groupCallAdapter.updateGroupCallItems(videoIdList, mRtcEngine!!)
+                }
+                else {
+                    onRemoteUserLeft(uid)
+                }
             }
         }
     }
@@ -106,7 +106,7 @@ class VideoCallActivity : BaseActivity(),GroupVideoCallAdapter.OnItemClick, View
         binding.ivAdd.setOnClickListener(this)
         EventBus.getDefault().register(this)
         if(PermissionUtil.hasPermissions(this, *PERMISSIONS))
-        initializeEngine()
+            initializeEngine()
         setObserver()
 
     }
@@ -187,10 +187,13 @@ class VideoCallActivity : BaseActivity(),GroupVideoCallAdapter.OnItemClick, View
                     if (response.message == "240") {
                         viewModal.logout()
                     } else if (response.message == "201") {
-                       // showLongToast(response.message)
+                        // showLongToast(response.message)
                     } else {
-                       // showLongToast(response.message)
+                        // showLongToast(response.message)
                     }
+                }
+                else -> {
+                    // handle null or unexpected case if needed
                 }
             }
         }
@@ -222,7 +225,7 @@ class VideoCallActivity : BaseActivity(),GroupVideoCallAdapter.OnItemClick, View
                         )
                         viewModal.otherUserRequestCall(request)
                     }
-                    }
+                }
                 is Resource.Loading -> {
                     ProgressDialog.showProgressBar(this)
                 }
@@ -231,10 +234,13 @@ class VideoCallActivity : BaseActivity(),GroupVideoCallAdapter.OnItemClick, View
                     if (response.message == "240") {
                         viewModal.logout()
                     } else if (response.message == "201") {
-                       // showLongToast(response.message)
+                        // showLongToast(response.message)
                     } else {
-                       // showLongToast(response.message)
+                        // showLongToast(response.message)
                     }
+                }
+                else -> {
+                    // handle null or unexpected case if needed
                 }
             }
         }
@@ -257,10 +263,13 @@ class VideoCallActivity : BaseActivity(),GroupVideoCallAdapter.OnItemClick, View
                     if (response.message == "240") {
                         viewModal.logout()
                     } else if (response.message == "201") {
-                      //  showLongToast(response.message)
+                        //  showLongToast(response.message)
                     } else {
-                      //  showLongToast(response.message)
+                        //  showLongToast(response.message)
                     }
+                }
+                else -> {
+                    // handle null or unexpected case if needed
                 }
             }
         }
@@ -293,10 +302,13 @@ class VideoCallActivity : BaseActivity(),GroupVideoCallAdapter.OnItemClick, View
                     if (response.message == "240") {
                         viewModal.logout()
                     } else if (response.message == "201") {
-                       // showLongToast(response.message)
+                        // showLongToast(response.message)
                     } else {
-                       // showLongToast(response.message)
+                        // showLongToast(response.message)
                     }
+                }
+                else -> {
+                    // handle null or unexpected case if needed
                 }
             }
         }
@@ -321,10 +333,13 @@ class VideoCallActivity : BaseActivity(),GroupVideoCallAdapter.OnItemClick, View
                     if (response.message == "240") {
                         viewModal.logout()
                     } else if (response.message == "201") {
-                  //      showLongToast(response.message)
+                        //      showLongToast(response.message)
                     } else {
-                   //     showLongToast(response.message)
+                        //     showLongToast(response.message)
                     }
+                }
+                else -> {
+                    // handle null or unexpected case if needed
                 }
             }
         }
@@ -343,7 +358,10 @@ class VideoCallActivity : BaseActivity(),GroupVideoCallAdapter.OnItemClick, View
                 }
                 is Resource.Error -> {
                     ProgressDialog.hideProgressBar()
-                   // showLongToast(response.message)
+                    // showLongToast(response.message)
+                }
+                else -> {
+                    // handle null or unexpected case if needed
                 }
             }
         }
@@ -363,6 +381,9 @@ class VideoCallActivity : BaseActivity(),GroupVideoCallAdapter.OnItemClick, View
                 is Resource.Error -> {
                     ProgressDialog.hideProgressBar()
                     //showLongToast(response.message)
+                }
+                else -> {
+                    // handle null or unexpected case if needed
                 }
             }
         }
@@ -521,7 +542,7 @@ class VideoCallActivity : BaseActivity(),GroupVideoCallAdapter.OnItemClick, View
 //        if (mRemoteVideo != null) {
 //            return
 //        }
-      //  binding.localVideoViewContainer.visibility = View.VISIBLE
+        //  binding.localVideoViewContainer.visibility = View.VISIBLE
         /*switchView(mLocalVideo!!)
         switchView(mRemoteVideo!!)*/
         /*
@@ -558,7 +579,7 @@ class VideoCallActivity : BaseActivity(),GroupVideoCallAdapter.OnItemClick, View
     private fun onRemoteUserLeft(uid: Int) {
         if (mRemoteVideo != null && mRemoteVideo!!.uid == uid) {
             removeFromParent(mRemoteVideo!!)
-           // Destroys remote view
+            // Destroys remote view
             endCall()
             mRemoteVideo = null
             mRtcEngine?.leaveChannel()
@@ -594,17 +615,17 @@ class VideoCallActivity : BaseActivity(),GroupVideoCallAdapter.OnItemClick, View
 
     private fun switchView(canvas: VideoCanvas) {
         val parent: ViewGroup? = removeFromParent(canvas)
-            if (parent === binding.localVideoViewContainer) {
-                if (canvas.view is SurfaceView) {
-                    (canvas.view as SurfaceView).setZOrderMediaOverlay(false)
-                }
-                binding.remoteVideoViewContainer.addView(canvas.view)
-            } else if (parent === binding.remoteVideoViewContainer) {
-                if (canvas.view is SurfaceView) {
-                    (canvas.view as SurfaceView).setZOrderMediaOverlay(true)
-                }
-                binding.localVideoViewContainer.addView(canvas.view)
+        if (parent === binding.localVideoViewContainer) {
+            if (canvas.view is SurfaceView) {
+                (canvas.view as SurfaceView).setZOrderMediaOverlay(false)
             }
+            binding.remoteVideoViewContainer.addView(canvas.view)
+        } else if (parent === binding.remoteVideoViewContainer) {
+            if (canvas.view is SurfaceView) {
+                (canvas.view as SurfaceView).setZOrderMediaOverlay(true)
+            }
+            binding.localVideoViewContainer.addView(canvas.view)
+        }
     }
 
     private fun switchGroupCallView(canvas: VideoCanvas,frameLay: FrameLayout) {

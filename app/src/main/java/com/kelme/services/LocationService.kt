@@ -115,7 +115,7 @@ class LocationService : Service() {
                             location.longitude.toString(),
                             System.currentTimeMillis().toString()
                         )
-                        //trackUser(request)
+                        trackUser(request)
                     } else {
                         locationHelper.stopLocationUpdates()
                         stopSelf()

@@ -142,6 +142,9 @@ class UserDetailsActivity : BaseActivity() {
                         finish()
                     }
                 }
+                else -> {
+                    ProgressDialog.hideProgressBar()
+                }
             }
         }
 
@@ -180,6 +183,9 @@ class UserDetailsActivity : BaseActivity() {
 //                            Toast.LENGTH_SHORT
 //                        ).show()
                     }
+                }
+                else -> {
+                    ProgressDialog.hideProgressBar()
                 }
             }
         }

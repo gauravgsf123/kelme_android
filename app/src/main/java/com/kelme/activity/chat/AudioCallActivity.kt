@@ -149,10 +149,12 @@ class AudioCallActivity : BaseActivity(), View.OnClickListener {
                     if (response.message == "240") {
                         viewModal.logout()
                     } else if (response.message == "201") {
-                      //  showLongToast(response.message)
+                        //  showLongToast(response.message)
                     } else {
                         // showLongToast(response.message)
                     }
+                } else -> {
+                // handle null or unexpected case if needed
                 }
             }
         }
@@ -199,6 +201,9 @@ class AudioCallActivity : BaseActivity(), View.OnClickListener {
                         // showLongToast(response.message)
                     }
                 }
+                else -> {
+                    // handle null or unexpected case if needed
+                }
             }
         }
 
@@ -225,6 +230,9 @@ class AudioCallActivity : BaseActivity(), View.OnClickListener {
                     } else {
                         //  showLongToast(response.message)
                     }
+                }
+                else -> {
+                    // handle null or unexpected case if needed
                 }
             }
         }
@@ -260,6 +268,9 @@ class AudioCallActivity : BaseActivity(), View.OnClickListener {
                         //showLongToast(response.message)
                     }
                 }
+                else -> {
+                    // handle null or unexpected case if needed
+                }
             }
         }
 
@@ -290,6 +301,9 @@ class AudioCallActivity : BaseActivity(), View.OnClickListener {
                         // showLongToast(response.message)
                     }
                 }
+                else -> {
+                    // handle null or unexpected case if needed
+                }
             }
         }
 
@@ -311,6 +325,9 @@ class AudioCallActivity : BaseActivity(), View.OnClickListener {
                     ProgressDialog.hideProgressBar()
                     //  showLongToast(response.message)
                 }
+                else -> {
+                    // handle null or unexpected case if needed
+                }
             }
         }
 
@@ -329,6 +346,9 @@ class AudioCallActivity : BaseActivity(), View.OnClickListener {
                 is Resource.Error -> {
                     ProgressDialog.hideProgressBar()
                     // showLongToast(response.message)
+                }
+                else -> {
+                    // handle null or unexpected case if needed
                 }
             }
         }
@@ -559,7 +579,7 @@ class AudioCallActivity : BaseActivity(), View.OnClickListener {
                 TAG,
                 String.format("onJoinChannelSuccess channel %s uid %d", channel, uid)
             )
-           // showLongToast(String.format("onJoinChannelSuccess channel %s uid %d", channel, uid))
+            // showLongToast(String.format("onJoinChannelSuccess channel %s uid %d", channel, uid))
             myUid = uid
             joined = true
             handler?.post {

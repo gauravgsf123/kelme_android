@@ -94,6 +94,9 @@ class CallerActivity : BaseActivity(),View.OnClickListener {
                     ProgressDialog.hideProgressBar()
 //
                 }
+                else -> {
+                    ProgressDialog.hideProgressBar()
+                }
             }
         }
 
@@ -110,6 +113,9 @@ class CallerActivity : BaseActivity(),View.OnClickListener {
                 is Resource.Error -> {
                     ProgressDialog.hideProgressBar()
 //
+                }
+                else -> {
+                    ProgressDialog.hideProgressBar()
                 }
             }
         }

@@ -25,18 +25,18 @@ class ChatViewModal(private val app: Application) :
     private val repository = ChatRepository()
     val contactList = MutableLiveData<Resource<List<ContactModel>>>()
     val chatList = MutableLiveData<Resource<List<ChatListModel>>>()
-    val logout = MutableLiveData<Resource<String>>()
+    val logout = MutableLiveData<Resource<String>?>()
 
-    val getTokenAgoraResponse = MutableLiveData<Resource<GetTokenAgoraResponse.Data>>()
-    val getVoipTokenResponse = MutableLiveData<Resource<String>>()
-    val otherUserRequestCallResponse = MutableLiveData<Resource<OtherUserRequestCallResponse.Data>>()
-    val senderJoinCalSuccessfullyResponse = MutableLiveData<Resource<SenderJoinCalSuccessfullyResponse.Data>>()
-    val otherUserJoinCallSuccessfullyResponse = MutableLiveData<Resource<OtherUserJoinCallSuccessfullyResponse.Data>>()
-    val otherUserjoinRejectCallResponse = MutableLiveData<Resource<OtherUserJoinCallSuccessfullyResponse.Data>>()
+    val getTokenAgoraResponse = MutableLiveData<Resource<GetTokenAgoraResponse.Data>?>()
+    val getVoipTokenResponse = MutableLiveData<Resource<String>?>()
+    val otherUserRequestCallResponse = MutableLiveData<Resource<OtherUserRequestCallResponse.Data>?>()
+    val senderJoinCalSuccessfullyResponse = MutableLiveData<Resource<SenderJoinCalSuccessfullyResponse.Data>?>()
+    val otherUserJoinCallSuccessfullyResponse = MutableLiveData<Resource<OtherUserJoinCallSuccessfullyResponse.Data>?>()
+    val otherUserjoinRejectCallResponse = MutableLiveData<Resource<OtherUserJoinCallSuccessfullyResponse.Data>?>()
     //val callEndResponse = MutableLiveData<Resource<OtherUserJoinCallSuccessfullyResponse>>()
 
-    val senderCanNotJoinCallResponse = MutableLiveData<Resource<SenderCanNotJoinCallResponse.Data>>()
-    val callEndResponse = MutableLiveData<Resource<String>>()
+    val senderCanNotJoinCallResponse = MutableLiveData<Resource<SenderCanNotJoinCallResponse.Data>?>()
+    val callEndResponse = MutableLiveData<Resource<String>?>()
 
 //    fun contactList() = viewModelScope.launch {
 //        if (Utils.hasInternetConnection(app.applicationContext)) {

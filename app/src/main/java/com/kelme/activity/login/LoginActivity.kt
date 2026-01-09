@@ -323,9 +323,14 @@ class LoginActivity : BaseActivity() {
                     res = false
                 }
             }
-            @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                if (!PermissionUtil.hasPermissions(this, *PERMISSION_PUSH)) {
+                    requestPermission(this, PERMISSION_PUSH, Constants.REQUEST_CODE_PUSH_NOTIFICATION)
+                }
+            }
+            /*@RequiresApi(Build.VERSION_CODES.TIRAMISU)
             if (!PermissionUtil.hasPermissions(this, *PERMISSION_PUSH))
-                requestPermission(this,PERMISSION_PUSH,Constants.REQUEST_CODE_PUSH_NOTIFICATION)
+                requestPermission(this,PERMISSION_PUSH,Constants.REQUEST_CODE_PUSH_NOTIFICATION)*/
         } /*else if(requestCode == Constants.REQUEST_CODE_PUSH_NOTIFICATION && grantResults.isNotEmpty()){
             @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
             if (!PermissionUtil.hasPermissions(this, *PERMISION_LOCATION))

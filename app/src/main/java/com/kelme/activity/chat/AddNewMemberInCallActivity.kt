@@ -81,6 +81,9 @@ class AddNewMemberInCallActivity : BaseActivity(), QuantityListner {
                        // showLongToast(response.message)
                     }
                 }
+                else -> {
+                    ProgressDialog.hideProgressBar()
+                }
             }
         }
     }

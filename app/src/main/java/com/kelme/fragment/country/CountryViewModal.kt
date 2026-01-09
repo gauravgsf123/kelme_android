@@ -22,19 +22,19 @@ class CountryViewModal(private val app: Application) :
 
     private val repository = CountryRepository()
 
-    val countryOutlookList = MutableLiveData<Resource<List<CountryOutlookModel>>>()
-    val countryList = MutableLiveData<Resource<List<CountryModel>>>()
-    val countrySearchData = MutableLiveData<Resource<CountrySearchModel>>()
+    val countryOutlookList = MutableLiveData<Resource<List<CountryOutlookModel>>?>()
+    val countryList = MutableLiveData<Resource<List<CountryModel>>??>()
+    val countrySearchData = MutableLiveData<Resource<CountrySearchModel>?>()
     val globalCountrySearchData = MutableLiveData<Resource<List<GlobalCountryModel>>>()
     val getOtherUserData = MutableLiveData<Resource<OtherUserDetailsModel>>()
-    val countryRiskLevelData = MutableLiveData<Resource<CountryRiskLevelData>>()
-    val secrityAlertListData = MutableLiveData<Resource<List<SecrityAlertListData>>>()
+    val countryRiskLevelData = MutableLiveData<Resource<CountryRiskLevelData>?>()
+    val secrityAlertListData = MutableLiveData<Resource<List<SecrityAlertListData>>?>()
     val calendarData = MutableLiveData<Resource<List<CalendarData>>>()
-    val riskLevelData = MutableLiveData<Resource<List<RiskLevelListData>>>()
-    val countryOutlookCategoryData = MutableLiveData<Resource<List<CountryOutlookCategoryData>>>()
-    val securityAlertDetails = MutableLiveData<Resource<SecurityAlertDetailsModel>>()
+    val riskLevelData = MutableLiveData<Resource<List<RiskLevelListData>>?>()
+    val countryOutlookCategoryData = MutableLiveData<Resource<List<CountryOutlookCategoryData>>?>()
+    val securityAlertDetails = MutableLiveData<Resource<SecurityAlertDetailsModel>?>()
 
-    val logout = MutableLiveData<Resource<String>>()
+    val logout = MutableLiveData<Resource<String>?>()
     fun logout() = viewModelScope.launch {
         if (Utils.hasInternetConnection(app.applicationContext)) {
             logout.postValue(Resource.Loading())

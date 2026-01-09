@@ -197,6 +197,9 @@ class CountryDetailFragment : BaseFragment() {
 //                        ).show()
                     }
                 }
+                else -> {
+                    ProgressDialog.hideProgressBar()
+                }
             }
         }
     }
@@ -236,6 +239,9 @@ class CountryDetailFragment : BaseFragment() {
 //                        ).show()
                     }
                 }
+                else -> {
+                    ProgressDialog.hideProgressBar()
+                }
             }
         }
     }
@@ -267,6 +273,9 @@ class CountryDetailFragment : BaseFragment() {
                             Toast.LENGTH_SHORT
                         ).show()
                     }
+                }
+                else -> {
+                    ProgressDialog.hideProgressBar()
                 }
             }
         }
@@ -325,6 +334,9 @@ class CountryDetailFragment : BaseFragment() {
                         )
                         activity?.finish()
                     }
+                }
+                else -> {
+                    ProgressDialog.hideProgressBar()
                 }
             }
         }

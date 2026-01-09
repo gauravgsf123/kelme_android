@@ -151,7 +151,7 @@ class CheckInFragment : Fragment(), OnMapReadyCallback,GoogleMap.OnMarkerClickLi
 
             // Set the fields to specify which types of place data to
             // return after the user has made a selection.
-            val fields = listOf(Place.Field.ID, Place.Field.NAME,Place.Field.LAT_LNG,Place.Field.ADDRESS)
+            val fields = listOf(Place.Field.ID, Place.Field.DISPLAY_NAME,Place.Field.LOCATION,Place.Field.ADDRESS_COMPONENTS)
 
             // Start the autocomplete intent.
 
@@ -254,7 +254,7 @@ class CheckInFragment : Fragment(), OnMapReadyCallback,GoogleMap.OnMarkerClickLi
 
         // Use fields to define the data types to return.
         val placeFields: List<Place.Field> =
-            listOf(Place.Field.NAME, Place.Field.TYPES, Place.Field.LAT_LNG)
+            listOf(Place.Field.DISPLAY_NAME, Place.Field.TYPES, Place.Field.LOCATION)
 
         // Use the builder to create a FindCurrentPlaceRequest.
         val request: FindCurrentPlaceRequest = FindCurrentPlaceRequest.newInstance(placeFields)
@@ -275,40 +275,40 @@ class CheckInFragment : Fragment(), OnMapReadyCallback,GoogleMap.OnMarkerClickLi
                         ?: emptyList()) {
                         Log.i(
                             "CheckIn",
-                            "Place '${placeLikelihood.place.name}' has type: ${placeLikelihood.place.types}"
+                            "Place '${placeLikelihood.place.displayName}' has type: ${placeLikelihood.place.placeTypes}"
                         )
-                        if (placeLikelihood.place.types.toString().contains("FOOD")) {
+                        if (placeLikelihood.place.placeTypes.toString().contains("FOOD")) {
                             val marker = map?.addMarker(
                                 MarkerOptions()
-                                    .position(placeLikelihood.place.latLng!!)
+                                    .position(placeLikelihood.place.location!!)
                                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.food))
                                     .anchor(0.5f, 0.5f)
-                                    .title(placeLikelihood.place.name)
+                                    .title(placeLikelihood.place.displayName)
                                 //.snippet(snippet)
                             )
-                            marker?.tag = placeLikelihood.place.name
+                            marker?.tag = placeLikelihood.place.displayName
                         }
-                        if (placeLikelihood.place.types.toString().contains("RESTAURANT")) {
+                        if (placeLikelihood.place.placeTypes.toString().contains("RESTAURANT")) {
                             val marker = map?.addMarker(
                                 MarkerOptions()
-                                    .position(placeLikelihood.place.latLng!!)
+                                    .position(placeLikelihood.place.location!!)
                                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.hotel))
                                     .anchor(0.5f, 0.5f)
-                                    .title(placeLikelihood.place.name)
+                                    .title(placeLikelihood.place.displayName)
                                 //.snippet(snippet)
                             )
-                            marker?.tag = placeLikelihood.place.name
+                            marker?.tag = placeLikelihood.place.displayName
                         }
-                        if (placeLikelihood.place.types.toString().contains("PETROL")) {
+                        if (placeLikelihood.place.placeTypes.toString().contains("PETROL")) {
                             val marker = map?.addMarker(
                                 MarkerOptions()
-                                    .position(placeLikelihood.place.latLng!!)
+                                    .position(placeLikelihood.place.location!!)
                                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.petrol))
                                     .anchor(0.5f, 0.5f)
-                                    .title(placeLikelihood.place.name)
+                                    .title(placeLikelihood.place.displayName)
                                 //.snippet(snippet)
                             )
-                            marker?.tag = placeLikelihood.place.name
+                            marker?.tag = placeLikelihood.place.displayName
                         }
                     }
                 } else {
@@ -576,6 +576,9 @@ class CheckInFragment : Fragment(), OnMapReadyCallback,GoogleMap.OnMarkerClickLi
                         )
                         activity?.finish()
                     }
+                }
+                else -> {
+                    ProgressDialog.hideProgressBar()
                 }
             }
         }

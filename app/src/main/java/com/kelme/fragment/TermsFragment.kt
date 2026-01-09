@@ -107,6 +107,9 @@ class TermsFragment : Fragment() {
                         activity?.finish()
                     }
                 }
+                else -> {
+                    ProgressDialog.hideProgressBar()
+                }
             }
         })
 
@@ -136,6 +139,9 @@ class TermsFragment : Fragment() {
 //                            Toast.LENGTH_SHORT
 //                        ).show()
                     }
+                }
+                else -> {
+                    ProgressDialog.hideProgressBar()
                 }
             }
         })

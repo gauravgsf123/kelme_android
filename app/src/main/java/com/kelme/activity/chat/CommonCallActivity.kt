@@ -412,6 +412,9 @@ class CommonCallActivity : BaseActivity(), GroupVideoCallAdapter.OnItemClick, Vi
                         // showLongToast(response.message)
                     }
                 }
+                else -> {
+                    // handle null or unexpected case if needed
+                }
             }
         }
 
@@ -467,6 +470,9 @@ class CommonCallActivity : BaseActivity(), GroupVideoCallAdapter.OnItemClick, Vi
                         // showLongToast(response.message)
                     }
                 }
+                else -> {
+                    // handle null or unexpected case if needed
+                }
             }
         }
 
@@ -492,6 +498,9 @@ class CommonCallActivity : BaseActivity(), GroupVideoCallAdapter.OnItemClick, Vi
                     } else {
                         //  showLongToast(response.message)
                     }
+                }
+                else -> {
+                    // handle null or unexpected case if needed
                 }
             }
         }
@@ -527,6 +536,9 @@ class CommonCallActivity : BaseActivity(), GroupVideoCallAdapter.OnItemClick, Vi
                         // showLongToast(response.message)
                     }
                 }
+                else -> {
+                    // handle null or unexpected case if needed
+                }
             }
         }
 
@@ -555,6 +567,9 @@ class CommonCallActivity : BaseActivity(), GroupVideoCallAdapter.OnItemClick, Vi
                         //     showLongToast(response.message)
                     }
                 }
+                else -> {
+                    // handle null or unexpected case if needed
+                }
             }
         }
 
@@ -574,6 +589,9 @@ class CommonCallActivity : BaseActivity(), GroupVideoCallAdapter.OnItemClick, Vi
                     ProgressDialog.hideProgressBar()
                     // showLongToast(response.message)
                 }
+                else -> {
+                    // handle null or unexpected case if needed
+                }
             }
         }
 
@@ -592,6 +610,9 @@ class CommonCallActivity : BaseActivity(), GroupVideoCallAdapter.OnItemClick, Vi
                 is Resource.Error -> {
                     ProgressDialog.hideProgressBar()
                     //showLongToast(response.message)
+                }
+                else -> {
+                    // handle null or unexpected case if needed
                 }
             }
         }

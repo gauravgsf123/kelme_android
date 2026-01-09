@@ -153,6 +153,9 @@ class NotificationFragment : Fragment(), RecyclerItemTouchHelper.RecyclerItemTou
                         activity?.finish()
                     }
                 }
+                else -> {
+                    ProgressDialog.hideProgressBar()
+                }
             }
         }
 
@@ -205,6 +208,9 @@ class NotificationFragment : Fragment(), RecyclerItemTouchHelper.RecyclerItemTou
 //                        ).show()
                     }
                 }
+                else -> {
+                    ProgressDialog.hideProgressBar()
+                }
             }
         }
 
@@ -249,6 +255,9 @@ class NotificationFragment : Fragment(), RecyclerItemTouchHelper.RecyclerItemTou
 //                            Toast.LENGTH_SHORT
 //                        ).show()
                     }
+                }
+                else -> {
+                    ProgressDialog.hideProgressBar()
                 }
             }
         }

@@ -121,6 +121,9 @@ class RiskLevelFragment : BaseFragment() {
                         activity?.finish()
                     }
                 }
+                else -> {
+                    ProgressDialog.hideProgressBar()
+                }
             }
         }
 
@@ -162,6 +165,9 @@ class RiskLevelFragment : BaseFragment() {
 //                            Toast.LENGTH_SHORT
 //                        ).show()
                     }
+                }
+                else -> {
+                    ProgressDialog.hideProgressBar()
                 }
             }
         }

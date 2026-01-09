@@ -73,7 +73,7 @@ class MapLocationPickerActivity : AppCompatActivity(), OnMapReadyCallback {
                     as AutocompleteSupportFragment
 
         // Specify the types of place data to return.
-        autocompleteFragment.setPlaceFields(listOf(Place.Field.ID, Place.Field.NAME,Place.Field.LAT_LNG))
+        autocompleteFragment.setPlaceFields(listOf(Place.Field.ID, Place.Field.DISPLAY_NAME,Place.Field.LOCATION))
 
         // Set up a PlaceSelectionListener to handle the response.
         autocompleteFragment.setOnPlaceSelectedListener(object : PlaceSelectionListener {
@@ -81,7 +81,7 @@ class MapLocationPickerActivity : AppCompatActivity(), OnMapReadyCallback {
 
                 val cameraPosition = CameraPosition.Builder()
                     .target(
-                        place.latLng!!
+                        place.location!!
 
                     ) // Sets the center of the map to location user
                     .zoom(17f) // Sets the zoom

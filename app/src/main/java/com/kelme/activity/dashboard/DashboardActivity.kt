@@ -407,7 +407,7 @@ class DashboardActivity : BaseActivity() {
     }*/
 
     private fun showDisclaimer(){
-        var builder = AlertDialog.Builder(this)
+        val builder = AlertDialog.Builder(this)
         builder.setTitle(resources.getString(R.string.disclaimer))
         builder.setMessage(resources.getString(R.string.disclaimer_message))
         builder.setPositiveButton(getString(R.string.ok)) { dialog, i ->
@@ -1114,6 +1114,9 @@ class DashboardActivity : BaseActivity() {
                         finish()
                     }
                 }
+                else -> {
+                    ProgressDialog.hideProgressBar()
+                }
             }
         }
 
@@ -1154,6 +1157,9 @@ class DashboardActivity : BaseActivity() {
                         )
                         finish()
                     }
+                }
+                else -> {
+                    ProgressDialog.hideProgressBar()
                 }
             }
         }

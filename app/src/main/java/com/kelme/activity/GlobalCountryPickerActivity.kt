@@ -138,6 +138,9 @@ class GlobalCountryPickerActivity : AppCompatActivity() {
                         finish()
                     }
                 }
+                else -> {
+                    ProgressDialog.hideProgressBar()
+                }
             }
         }
 
@@ -171,6 +174,9 @@ class GlobalCountryPickerActivity : AppCompatActivity() {
 //                                Toast.LENGTH_SHORT
 //                            ).show()
                     }
+                }
+                else -> {
+                    ProgressDialog.hideProgressBar()
                 }
             }
         }

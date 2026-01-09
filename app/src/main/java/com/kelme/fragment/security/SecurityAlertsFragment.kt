@@ -273,6 +273,9 @@ class SecurityAlertsFragment : BaseFragment() {
 //                        ).show()
                     }
                 }
+                else -> {
+                    ProgressDialog.hideProgressBar()
+                }
             }
         }
 

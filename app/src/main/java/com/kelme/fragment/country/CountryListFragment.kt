@@ -127,6 +127,9 @@ class CountryListFragment : BaseFragment() {
                         activity?.finish()
                     }
                 }
+                else -> {
+                    ProgressDialog.hideProgressBar()
+                }
             }
         }
 
@@ -158,6 +161,9 @@ class CountryListFragment : BaseFragment() {
 //                            Toast.LENGTH_SHORT
 //                        ).show()
                     }
+                }
+                else -> {
+                    ProgressDialog.hideProgressBar()
                 }
             }
         }

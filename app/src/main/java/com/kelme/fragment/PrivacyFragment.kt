@@ -108,6 +108,9 @@ class PrivacyFragment : BaseFragment() {
                         activity?.finish()
                     }
                 }
+                else -> {
+                    ProgressDialog.hideProgressBar()
+                }
             }
         })
 
@@ -137,6 +140,9 @@ class PrivacyFragment : BaseFragment() {
 //                            Toast.LENGTH_SHORT
 //                        ).show()
                     }
+                }
+                else -> {
+                    ProgressDialog.hideProgressBar()
                 }
             }
         })

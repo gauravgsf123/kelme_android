@@ -176,6 +176,9 @@ class SettingFragment : BaseFragment() {
                         activity?.finish()
                     }
                 }
+                else -> {
+                    ProgressDialog.hideProgressBar()
+                }
             }
         }
 
@@ -226,6 +229,9 @@ class SettingFragment : BaseFragment() {
 //                        ).show()
                     }
                 }
+                else -> {
+                    ProgressDialog.hideProgressBar()
+                }
             }
         }
 
@@ -252,6 +258,9 @@ class SettingFragment : BaseFragment() {
 //                            Toast.LENGTH_SHORT
 //                        ).show()
                     }
+                }
+                else -> {
+                    ProgressDialog.hideProgressBar()
                 }
             }
         })

@@ -133,7 +133,7 @@ class VideoChatViewActivity : BaseActivity() {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     checkSelfPermission(Manifest.permission.CAMERA, PERMISSION_REQ_ID_CAMERA)
                 } else {
-                   // showLongToast("No permission for " + Manifest.permission.RECORD_AUDIO)
+                    // showLongToast("No permission for " + Manifest.permission.RECORD_AUDIO)
                     finish()
                 }
             }
@@ -148,9 +148,9 @@ class VideoChatViewActivity : BaseActivity() {
         }
     }
 
-   /* private fun showLongToast(msg: String) {
-        this.runOnUiThread { Toast.makeText(applicationContext, msg, Toast.LENGTH_LONG).show() }
-    }*/
+    /* private fun showLongToast(msg: String) {
+         this.runOnUiThread { Toast.makeText(applicationContext, msg, Toast.LENGTH_LONG).show() }
+     }*/
 
 
     override fun onDestroy() {

@@ -18,7 +18,7 @@ class GroupVideoCallAdapter (
     private var list: ArrayList<Int>,
     private var mRtcEngine: RtcEngine,
     private var listner:OnItemClick
-    ) : RecyclerView.Adapter<GroupVideoCallAdapter.MyHolder>() {
+) : RecyclerView.Adapter<GroupVideoCallAdapter.MyHolder>() {
 
     var ustate:Int=0
     var uid:Int=0
@@ -65,11 +65,11 @@ class GroupVideoCallAdapter (
         notifyDataSetChanged()
     }
 
-     fun updateBackground(id:Int,state:Int) {
+    fun updateBackground(id:Int,state:Int) {
         // list.clear()
-         uid=id
-         ustate = state
-         notifyDataSetChanged()
+        uid=id
+        ustate = state
+        notifyDataSetChanged()
     }
 
     class MyHolder(itemView: View,listener: ItemClickListener?) : RecyclerView.ViewHolder(itemView) {
@@ -90,7 +90,7 @@ class GroupVideoCallAdapter (
             mRtcEngine.setupRemoteVideo(mRemoteVideo)
 
             itemView.setOnClickListener {
-               // binding?.groupVideoViewContainer?.setBackgroundColor(Color.CYAN)
+                // binding?.groupVideoViewContainer?.setBackgroundColor(Color.CYAN)
                 //binding.groupVideoViewContainer.setBackgroundResource(R.drawable.background_white_rounded)
                 listner.onClick(mRemoteVideo, binding?.groupVideoViewContainer!!)
             }

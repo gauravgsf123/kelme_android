@@ -103,6 +103,8 @@ class ContactPickerActivity : AppCompatActivity() {
                         )
                         finish()
                     }
+                }else -> {
+                    ProgressDialog.hideProgressBar()
                 }
             }
         }
