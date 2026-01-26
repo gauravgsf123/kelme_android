@@ -214,16 +214,11 @@ class SecurityAlertsDetailFragment : Fragment() {
                         } else {
                             binding.clEventOverview.visibility = View.VISIBLE
                             // binding.tvEventOverview.text = model.risk_description
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                                binding.tvEventOverview.text =
-                                    (Html.fromHtml(
-                                        model.risk_description,
-                                        Html.FROM_HTML_MODE_COMPACT
-                                    ))
-                            } else {
-                                binding.tvEventOverview.text =
-                                    (Html.fromHtml(model.risk_description))
-                            }
+                            binding.tvEventOverview.text =
+                                (Html.fromHtml(
+                                    Utils.formatHtml(model.risk_description),
+                                    Html.FROM_HTML_MODE_LEGACY
+                                ))
                         }
 
                         if (model.analysis.isEmpty()) {
@@ -231,12 +226,8 @@ class SecurityAlertsDetailFragment : Fragment() {
                         } else {
                             binding.clAnalysis.visibility = View.VISIBLE
                             // binding.tvAnalysis.text = model.analysis
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                                binding.tvAnalysis.text =
-                                    (Html.fromHtml(model.analysis, Html.FROM_HTML_MODE_COMPACT))
-                            } else {
-                                binding.tvAnalysis.text = (Html.fromHtml(model.analysis))
-                            }
+                            binding.tvAnalysis.text =
+                                (Html.fromHtml(Utils.formatHtml(model.analysis), Html.FROM_HTML_MODE_LEGACY))
                         }
 
                         if (model.security_advice.isEmpty()) {
@@ -244,15 +235,10 @@ class SecurityAlertsDetailFragment : Fragment() {
                         } else {
                             binding.clSecurityAdvice.visibility = View.VISIBLE
                             // binding.tvSecurityAdvice.text = model.security_advice
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                                binding.tvSecurityAdvice.text =
-                                    (Html.fromHtml(
-                                        model.security_advice,
-                                        Html.FROM_HTML_MODE_COMPACT))
-                            } else {
-                                binding.tvSecurityAdvice.text =
-                                    (Html.fromHtml(model.security_advice))
-                            }
+                            binding.tvSecurityAdvice.text =
+                                (Html.fromHtml(
+                                    Utils.formatHtml(model.security_advice),
+                                    Html.FROM_HTML_MODE_LEGACY))
                         }
 
                         if (model.intel_gathering.isEmpty()) {
@@ -260,16 +246,11 @@ class SecurityAlertsDetailFragment : Fragment() {
                         } else {
                             binding.clIntelGathering.visibility = View.VISIBLE
                             //binding.tvIntelGathering.text = model.intel_gathering
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                                binding.tvIntelGathering.text =
-                                    (Html.fromHtml(
-                                        model.intel_gathering,
-                                        Html.FROM_HTML_MODE_COMPACT
-                                    ))
-                            } else {
-                                binding.tvIntelGathering.text =
-                                    (Html.fromHtml(model.intel_gathering))
-                            }
+                            binding.tvIntelGathering.text =
+                                (Html.fromHtml(
+                                    Utils.formatHtml(model.intel_gathering),
+                                    Html.FROM_HTML_MODE_LEGACY
+                                ))
                         }
 
                         if (model.forcast.isEmpty()) {
@@ -277,12 +258,8 @@ class SecurityAlertsDetailFragment : Fragment() {
                         } else {
                             binding.clforcast.visibility = View.VISIBLE
                             // binding.tvforcast.text = model.forcast
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                                binding.tvforcast.text =
-                                    (Html.fromHtml(model.forcast, Html.FROM_HTML_MODE_COMPACT))
-                            } else {
-                                binding.tvforcast.text = (Html.fromHtml(model.forcast))
-                            }
+                            binding.tvforcast.text =
+                                (Html.fromHtml(Utils.formatHtml(model.forcast), Html.FROM_HTML_MODE_LEGACY))
                         }
 
                         binding.tvRiskLevel.text = model.risk_type

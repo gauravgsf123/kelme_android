@@ -238,4 +238,14 @@ object Utils {
             firebaseModel.receiver_id
         }
     }
+
+    fun formatHtml(text: String): String {
+        return text
+            .replace("\r\n", "\n")   // normalize
+            .replace("\n\n", "<br><br>")
+            .replace("\n", "<br>")
+            .replace("ﬀ", "ff")
+            .replace("ﬁ", "fi")
+            .let { "<ul>$it</li></ul>" }
+    }
 }

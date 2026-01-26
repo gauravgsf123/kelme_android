@@ -33,6 +33,7 @@ import androidx.core.view.updatePadding
 import androidx.databinding.DataBindingUtil
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.bumptech.glide.Glide
@@ -466,7 +467,7 @@ class DashboardActivity : BaseActivity() {
                 Utils.hideKeyboard(this, binding.root)
                 when (position) {
                     0 -> {
-                        replaceFragment(HomeFragment(), Bundle.EMPTY)
+                        openHome(HomeFragment(), Bundle.EMPTY)
                     }
                     1 -> {
                         replaceFragment(CountryOutlookFragment(), Bundle.EMPTY)
@@ -522,7 +523,7 @@ class DashboardActivity : BaseActivity() {
 //        }
 
         binding.tvTitle.setOnClickListener {
-            replaceFragment(HomeFragment(), Bundle.EMPTY)
+            openHome(HomeFragment(), Bundle.EMPTY)
         }
 
         binding.tvProfile.setOnClickListener {
@@ -632,7 +633,7 @@ class DashboardActivity : BaseActivity() {
 
         binding.navView.itemIconTintList = null
 
-        replaceFragment(HomeFragment(), Bundle.EMPTY)
+        openHome(HomeFragment(), Bundle.EMPTY)
 
         binding.drawer.addDrawerListener(object : DrawerLayout.DrawerListener {
             override fun onDrawerSlide(drawerView: View, slideOffset: Float) {
@@ -974,6 +975,19 @@ class DashboardActivity : BaseActivity() {
                     )
             }
         }
+    }
+
+    fun openHome(fragment: Fragment, bundle: Bundle) {
+        supportFragmentManager.popBackStack(
+            null,
+            FragmentManager.POP_BACK_STACK_INCLUSIVE
+        )
+
+        fragment.arguments = bundle
+
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.nav_host_fragment, fragment)
+            .commit()
     }
 
     fun replaceFragment(fragment: Fragment, bundle: Bundle) {

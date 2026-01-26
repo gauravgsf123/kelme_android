@@ -1,5 +1,6 @@
 package com.kelme.adapter
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.text.format.DateUtils
 import android.util.Log
@@ -85,6 +86,7 @@ class ChatListAdapter(
             }
         }
 
+        @SuppressLint("SuspiciousIndentation")
         fun bind(modal: ChatListModelWithName, isDelete: Boolean, selectAll: Boolean) {
             val uid = PrefManager.read(PrefManager.FCM_USER_ID, "")
             if (modal.chatType == "single") {

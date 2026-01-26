@@ -70,7 +70,7 @@
                 android:textSize="@dimen/_12ssp"
                 android:textColor="@color/black"
                 android:padding="@dimen/_8sdp"
-                android:inputType="text"
+                android:inputType="textPassword"
                 android:imeOptions="actionDone"
                 android:gravity="center|start"
                 android:drawableStart="@drawable/lock"
