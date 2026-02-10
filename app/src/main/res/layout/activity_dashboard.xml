@@ -362,7 +362,9 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/clBottom"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/_65sdp"
+                android:layout_height="wrap_content"
+                android:paddingTop="10dp"
+                android:paddingBottom="@dimen/_40sdp"
                 android:background="@color/foregroundColor"
                 app:layout_constraintBottom_toBottomOf="parent">
 
@@ -406,9 +408,9 @@
                 android:focusable="true"
                 android:longClickable="true"
                 android:src="@drawable/dashboard_sos"
-                app:layout_constraintBottom_toTopOf="@+id/clBottom"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/clBottom"
                 app:layout_constraintTop_toTopOf="@+id/clBottom"
                 tools:ignore="SpeakableTextPresentCheck" />
 
@@ -421,7 +423,6 @@
             android:layout_height="match_parent"
             android:layout_gravity="start"
             android:background="@color/redDark"
-            android:fitsSystemWindows="false"
             app:headerLayout="@layout/nav_header_view"
             app:itemTextAppearance="@style/NavigationDrawerStyle"
             app:itemTextColor="@color/white">

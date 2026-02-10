@@ -6,6 +6,7 @@ import android.app.Activity
 import android.app.ActivityManager
 import android.content.*
 import android.content.pm.PackageManager
+import android.graphics.Insets
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.location.*
@@ -28,6 +29,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.location.LocationManagerCompat
 import androidx.core.view.GravityCompat
 import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.databinding.DataBindingUtil
@@ -109,11 +111,32 @@ class DashboardActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
 
         binding = DataBindingUtil.setContentView( this, R.layout.activity_dashboard)
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+
+        // Handle insets
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(insets.left, insets.top, insets.right, insets.bottom)
+            WindowInsetsCompat.CONSUMED
+        }
         ViewCompat.setOnApplyWindowInsetsListener(binding.clTop) { v, insets ->
             val statusBarTop = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
             v.updatePadding(top = statusBarTop)
             insets
         }
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(0, systemBars.top, 0, 0)
+            insets
+        }
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.clBottom) { v, insets ->
+            val navBar = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom
+            v.setPadding(v.paddingLeft, v.paddingTop, v.paddingRight, navBar)
+            insets
+        }
+
         val myList = intent.getSerializableExtra("mylist") as ArrayList<ChatListModelWithName>?
         var startPageNumber =""
         if ( savedInstanceState != null) {
@@ -539,7 +562,10 @@ class DashboardActivity : BaseActivity() {
         }
 
         binding.backArrow.setOnClickListener {
-            onBackPressed()
+
+                this.supportFragmentManager
+                .popBackStack()
+            //onBackPressed()
         }
 
         binding.ivFilter.setOnClickListener {

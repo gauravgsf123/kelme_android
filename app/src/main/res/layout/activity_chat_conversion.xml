@@ -29,10 +29,12 @@
         <include
             android:id="@+id/layout_chat_bottom"
             layout="@layout/chat_layout_bottom"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toBottomOf="@+id/rv_chat"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             android:visibility="visible" />
 
         <include
