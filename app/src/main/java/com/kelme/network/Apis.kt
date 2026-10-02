@@ -112,7 +112,8 @@ interface Apis {
     @POST("security_alert_list")
     suspend fun securityAlertList(@Body request: SecurityAlertListRequest): Response<SecurityAlertListResponse>
 
-    @POST("security_alert_detail")
+    //@POST("security_alert_detail")
+    @POST("security_alert_detail_new")
     suspend fun securityAlertDetails(@Body request: SecurityAlertDetailsRequest): Response<SecurityAlertDetailsResponse>
 
     @POST("safety_check_alert")

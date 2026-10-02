@@ -289,7 +289,7 @@
             android:value="@string/default_notification_channel_id" />
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="com.kelme.fileprovider"
+            android:authorities="${applicationId}.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data

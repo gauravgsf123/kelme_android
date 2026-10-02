@@ -20,16 +20,16 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
- debug {
-    //Enable the proguard
-    minifyEnabled true
-    proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), "proguard-rules.pro"
-
-    //Other parameters
-    debuggable false
-    jniDebuggable false
-    renderscriptDebuggable false
-    signingConfig playStoreConfig //Add your own signing config
-    pseudoLocalesEnabled false
-    zipAlignEnabled true
-}
+# debug {
+#    //Enable the proguard
+#    minifyEnabled true
+#    proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), "proguard-rules.pro"
+#
+#    //Other parameters
+#    debuggable false
+#    jniDebuggable false
+#    renderscriptDebuggable false
+#    signingConfig playStoreConfig //Add your own signing config
+#    pseudoLocalesEnabled false
+#    zipAlignEnabled true
+#}

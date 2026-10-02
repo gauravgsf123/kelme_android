@@ -2,11 +2,13 @@ package com.kelme.adapter
 
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.kelme.BuildConfig
 import com.kelme.R
 import com.kelme.activity.chat.UserDetailsActivity
 import com.kelme.databinding.ItemContactListBinding
@@ -59,14 +61,7 @@ class ContactListAdapter(
 
         fun bind(modal: ContactUserDetailsModel) {
             binding?.tvName?.text = modal.name
-            if (modal.image?.isNotEmpty() == true ||modal.image!="" || modal.image!="assets\\/uploads\\/images\\/") {
-                modal.image?.let { Utils.loadImage(context, binding?.ivCountry, Constants.BASE_URL+it) }
-//                binding?.let {
-//                    Glide.with(context)
-//                        .load(Constants.SERVER_URL+modal.image)
-//                        .into(it.ivCountry)
-//                }
-            }
+            modal.image?.let { Utils.loadImage(context, binding?.ivCountry, BuildConfig.BASE_URL+it) }
 
             binding?.tvName?.setOnClickListener {
                 val intent = Intent(context, UserDetailsActivity::class.java)

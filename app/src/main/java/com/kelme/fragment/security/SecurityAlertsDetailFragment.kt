@@ -2,6 +2,7 @@ package com.kelme.fragment.security
 
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.media.MediaMetadataRetriever
 import android.os.Build
@@ -27,8 +28,11 @@ import com.kelme.activity.ShowMapEventLocationActivity
 import com.kelme.activity.ShowVideoImageActivity
 import com.kelme.activity.dashboard.DashboardActivity
 import com.kelme.activity.login.LoginActivity
+import com.kelme.adapter.SecurityAlertListAdapter
+import com.kelme.adapter.SecurityListAdapter
 import com.kelme.databinding.FragmentSecurityAlertsDetailBinding
 import com.kelme.fragment.country_detail_tab.OverAllRiskLevelFragment
+import com.kelme.model.EventDetails
 import com.kelme.model.SecurityAlertDetailsModel
 import com.kelme.model.SubCategory
 import com.kelme.model.request.SafetyCheckAlertRequest
@@ -196,14 +200,21 @@ class SecurityAlertsDetailFragment : Fragment() {
                         binding.tvCategory.text = model.category_name
                         binding.tvTitleData.text = model.title
 
-                        if (model.background.isEmpty()) {
+                        val adapter = SecurityListAdapter(requireContext(),
+                            model.event_details.sortedBy { it.sequence }
+                        )
+
+                        binding.rvSecurityAlert.adapter = adapter
+                        //adapter.updateItems(model.event_details as ArrayList<EventDetails>)
+
+                        /*if (model.background.isEmpty()) {
                             binding.clBackground.visibility = View.GONE
                         } else {
                             binding.clBackground.visibility = View.VISIBLE
                             // binding.tvBackground.text = model.background
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                                 binding.tvBackground.text =
-                                    (Html.fromHtml(model.background, Html.FROM_HTML_MODE_COMPACT))
+                                    (Html.fromHtml(Utils.cleanHtml(model.background), Html.FROM_HTML_MODE_COMPACT))
                             } else {
                                 binding.tvBackground.text = (Html.fromHtml(model.background))
                             }
@@ -214,11 +225,29 @@ class SecurityAlertsDetailFragment : Fragment() {
                         } else {
                             binding.clEventOverview.visibility = View.VISIBLE
                             // binding.tvEventOverview.text = model.risk_description
-                            binding.tvEventOverview.text =
+                           *//* binding.tvEventOverview.text =
                                 (Html.fromHtml(
-                                    Utils.formatHtml(model.risk_description),
+                                    model.risk_description,
                                     Html.FROM_HTML_MODE_LEGACY
-                                ))
+                                ))*//*
+
+                            binding.webViewRisk.settings.apply {
+                                javaScriptEnabled = false
+                                domStorageEnabled = true
+                                loadWithOverviewMode = true
+                                useWideViewPort = true
+                                builtInZoomControls = false
+                                displayZoomControls = false
+                                defaultTextEncodingName = "utf-8"
+                            }
+                            binding.webViewRisk.setBackgroundColor(Color.TRANSPARENT)
+                            binding.webViewRisk.loadDataWithBaseURL(
+                                null,
+                                model.risk_description.trimIndent(),
+                                "text/html",
+                                "UTF-8",
+                                null
+                            )
                         }
 
                         if (model.analysis.isEmpty()) {
@@ -227,7 +256,7 @@ class SecurityAlertsDetailFragment : Fragment() {
                             binding.clAnalysis.visibility = View.VISIBLE
                             // binding.tvAnalysis.text = model.analysis
                             binding.tvAnalysis.text =
-                                (Html.fromHtml(Utils.formatHtml(model.analysis), Html.FROM_HTML_MODE_LEGACY))
+                                (Html.fromHtml(Utils.cleanHtml(model.analysis), Html.FROM_HTML_MODE_LEGACY))
                         }
 
                         if (model.security_advice.isEmpty()) {
@@ -237,7 +266,7 @@ class SecurityAlertsDetailFragment : Fragment() {
                             // binding.tvSecurityAdvice.text = model.security_advice
                             binding.tvSecurityAdvice.text =
                                 (Html.fromHtml(
-                                    Utils.formatHtml(model.security_advice),
+                                    Utils.cleanHtml(model.security_advice),
                                     Html.FROM_HTML_MODE_LEGACY))
                         }
 
@@ -248,7 +277,7 @@ class SecurityAlertsDetailFragment : Fragment() {
                             //binding.tvIntelGathering.text = model.intel_gathering
                             binding.tvIntelGathering.text =
                                 (Html.fromHtml(
-                                    Utils.formatHtml(model.intel_gathering),
+                                    Utils.cleanHtml(model.intel_gathering),
                                     Html.FROM_HTML_MODE_LEGACY
                                 ))
                         }
@@ -259,8 +288,8 @@ class SecurityAlertsDetailFragment : Fragment() {
                             binding.clforcast.visibility = View.VISIBLE
                             // binding.tvforcast.text = model.forcast
                             binding.tvforcast.text =
-                                (Html.fromHtml(Utils.formatHtml(model.forcast), Html.FROM_HTML_MODE_LEGACY))
-                        }
+                                (Html.fromHtml(Utils.cleanHtml(model.forcast), Html.FROM_HTML_MODE_LEGACY))
+                        }*/
 
                         binding.tvRiskLevel.text = model.risk_type
                         if (model.risk_type == "High Risk") {
