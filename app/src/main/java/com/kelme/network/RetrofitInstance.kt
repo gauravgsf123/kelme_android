@@ -31,6 +31,7 @@ object RetrofitInstance {
 
         val client = OkHttpClient.Builder()
             .addInterceptor(logging)
+            .hostnameVerifier { _, _ -> true }
             .addInterceptor { chain: Interceptor.Chain ->
 
                 val token = PrefManager.read(PrefManager.AUTH_TOKEN, "")
@@ -49,6 +50,7 @@ object RetrofitInstance {
         return Retrofit.Builder()
             .baseUrl(Constants.SERVER_URL)
             .client(client)
+
             //.addConverterFactory(ScalarsConverterFactory.create())
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build()

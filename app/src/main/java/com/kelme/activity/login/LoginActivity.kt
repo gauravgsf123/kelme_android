@@ -201,7 +201,7 @@ class LoginActivity : BaseActivity() {
                             PrefManager.write(PrefManager.IS_LOGIN, true)
                             finish()
                         } else {
-                          //  Toast.makeText(this, "firebase login failed", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, "firebase login failed", Toast.LENGTH_SHORT).show()
                             Log.d(TAG, "signInFirebaseAuth: " + task.exception)
                         }
                     }

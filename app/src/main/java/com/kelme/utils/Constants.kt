@@ -2,6 +2,7 @@ package com.kelme.utils
 
 import android.Manifest
 import android.os.Build
+import com.kelme.BuildConfig
 import com.kelme.model.ContactModel
 
 /**
@@ -10,9 +11,14 @@ import com.kelme.model.ContactModel
 object Constants {
 
     //const val BASE_URL = "https://quytech.net/kelmerisk_live/"
-    const val BASE_URL = "https://portal.krisk24.com/"
-    const val SERVER_URL = BASE_URL+"api/"
-    const val SERVER_IMAGE_URL = BASE_URL+"assets/uploads/country_flag/"
+    //const val BASE_URL = "https://portal.krisk24.com/" //Live url
+   /* const val BASE_URL = "https://13.134.14.237/" // Test url
+    const val SERVER_URL = BASE_URL+"api/"*/
+
+    const val API = "api/"
+
+    val SERVER_URL = BuildConfig.BASE_URL + API
+    const val SERVER_IMAGE_URL =  BuildConfig.BASE_URL+"assets/uploads/country_flag/"
 
     const val DEVICE_TYPE_ID = "1"    // 1 -> ANDROID 2 -> IOS
     const val COUNTRY_OUTLOOK_MODEL = "countryOutlookModel"

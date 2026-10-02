@@ -254,13 +254,25 @@
                         app:layout_constraintTop_toBottomOf="@+id/tvRiskLevel" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/cl_event_overview"
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvSecurityAlert"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:clipToPadding="false"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:layout_marginBottom="@dimen/_10sdp"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:layout_constraintBottom_toTopOf="@+id/cl_image_video"
+                    app:layout_constraintTop_toBottomOf="@+id/clRiskLevel"
+                    tools:listitem="@layout/item_security_list" />
+
+                <!--<androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cl_event_overview"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     app:layout_constraintTop_toBottomOf="@+id/clRiskLevel">
 
-                    <com.kelme.custom.RegularTextView
+                    <com.kelme.custom.BoldTextView
                         android:id="@+id/tv_event_overview_title"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -275,7 +287,7 @@
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintWidth_percent=".40" />
 
-                    <com.kelme.custom.MediumTextview
+                    &lt;!&ndash;<com.kelme.custom.MediumTextview
                         android:id="@+id/tv_event_overview"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -283,18 +295,25 @@
                         android:padding="@dimen/_10sdp"
                         android:breakStrategy="high_quality"
                         android:textIsSelectable="true"
-                        android:textColor="@color/white"
                         app:layout_constraintRight_toRightOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/tv_event_overview_title"
                         app:layout_constraintWidth_percent=".60"
-                        tools:text="Security forces captured a suspected IS suicide bomber and members of the Al-Nusra terrorist group in separate operations" />
+                        tools:text="Security forces captured a suspected IS suicide bomber and members of the Al-Nusra terrorist group in separate operations" />&ndash;&gt;
+                    <WebView
+                        android:id="@+id/webViewRisk"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@android:color/transparent"
+                        android:overScrollMode="never"
+                        app:layout_constraintTop_toBottomOf="@id/tv_event_overview_title"
+                        />
 
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/_2sdp"
                         android:background="@color/foregroundColor"
-                        app:layout_constraintTop_toBottomOf="@+id/tv_event_overview" />
+                        app:layout_constraintTop_toBottomOf="@+id/webViewRisk" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
@@ -303,7 +322,7 @@
                     android:layout_height="wrap_content"
                     app:layout_constraintTop_toBottomOf="@+id/cl_event_overview">
 
-                    <com.kelme.custom.RegularTextView
+                    <com.kelme.custom.BoldTextView
                         android:id="@+id/tv_background_title"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -324,7 +343,6 @@
                         android:layout_height="wrap_content"
                         android:justificationMode="inter_word"
                         android:padding="@dimen/_10sdp"
-                        android:textColor="@color/white"
                         app:layout_constraintRight_toRightOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/tv_background_title"
@@ -344,7 +362,7 @@
                     android:layout_height="wrap_content"
                     app:layout_constraintTop_toBottomOf="@+id/cl_background">
 
-                    <com.kelme.custom.RegularTextView
+                    <com.kelme.custom.BoldTextView
                         android:id="@+id/tv_analysis_title"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -365,7 +383,6 @@
                         android:layout_height="wrap_content"
                         android:justificationMode="inter_word"
                         android:padding="@dimen/_10sdp"
-                        android:textColor="@color/white"
                         app:layout_constraintRight_toRightOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/tv_analysis_title"
                         app:layout_constraintWidth_percent=".60"
@@ -384,7 +401,7 @@
                     android:layout_height="wrap_content"
                     app:layout_constraintTop_toBottomOf="@+id/cl_analysis">
 
-                    <com.kelme.custom.RegularTextView
+                    <com.kelme.custom.BoldTextView
                         android:id="@+id/tvIntelGatheringTitle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -405,7 +422,6 @@
                         android:layout_height="wrap_content"
                         android:justificationMode="inter_word"
                         android:padding="@dimen/_10sdp"
-                        android:textColor="@color/white"
                         app:layout_constraintRight_toRightOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/tvIntelGatheringTitle"
                         app:layout_constraintWidth_percent=".60"
@@ -424,7 +440,7 @@
                     android:layout_height="wrap_content"
                     app:layout_constraintTop_toBottomOf="@+id/clIntelGathering">
 
-                    <com.kelme.custom.RegularTextView
+                    <com.kelme.custom.BoldTextView
                         android:id="@+id/tvforcastTitle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -445,7 +461,6 @@
                         android:layout_height="wrap_content"
                         android:justificationMode="inter_word"
                         android:padding="@dimen/_10sdp"
-                        android:textColor="@color/white"
                         app:layout_constraintRight_toRightOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/tvforcastTitle"
                         app:layout_constraintWidth_percent=".60"
@@ -464,7 +479,7 @@
                     android:layout_height="wrap_content"
                     app:layout_constraintTop_toBottomOf="@+id/clforcast">
 
-                    <com.kelme.custom.RegularTextView
+                    <com.kelme.custom.BoldTextView
                         android:id="@+id/tv_security_advice_title"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -485,7 +500,6 @@
                         android:layout_height="wrap_content"
                         android:justificationMode="inter_word"
                         android:padding="@dimen/_10sdp"
-                        android:textColor="@color/white"
                         app:layout_constraintRight_toRightOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/tv_security_advice_title"
                         app:layout_constraintWidth_percent=".60"
@@ -496,15 +510,16 @@
                         android:layout_height="@dimen/_2sdp"
                         android:background="@color/foregroundColor"
                         app:layout_constraintTop_toBottomOf="@+id/tv_security_advice" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>-->
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/cl_image_video"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:layout_constraintTop_toBottomOf="@+id/cl_security_advice">
+                    app:layout_constraintBottom_toTopOf="@+id/cl_safe_danger"
+                    app:layout_constraintTop_toBottomOf="@+id/rvSecurityAlert">
 
-                    <com.kelme.custom.RegularTextView
+                    <com.kelme.custom.BoldTextView
                         android:id="@+id/tv_image_video_title"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -574,6 +589,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_15sdp"
                     android:visibility="invisible"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/cl_image_video">
 
                     <androidx.cardview.widget.CardView
@@ -618,6 +634,7 @@
                             android:textSize="@dimen/_14sdp" />
                     </androidx.cardview.widget.CardView>
                 </androidx.constraintlayout.widget.ConstraintLayout>
+
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.core.widget.NestedScrollView>
 

@@ -248,4 +248,74 @@ object Utils {
             .replace("ﬁ", "fi")
             .let { "<ul>$it</li></ul>" }
     }
+
+    fun cleanHtml(raw: String): String {
+        return raw
+            /*.replace(
+                "<li>",
+                "<br><font size='12'>&#8226;</font> "
+            )
+            .replace("</li>", "")*/
+            //.replace("<li>", "&#8226; ")   // convert bullets
+            //.replace("</li>", "<br>")    // handle line breaks
+
+        /*val formatted = Utils.formatHtml(model.risk_description)
+            .replace("<li>", "&#8226; ")   // bullet symbol
+            .replace("</li>", "<br>")*/
+
+    }
+
+    fun cleanHtml1(rawHtml: String): String {
+        var html = rawHtml
+
+        // 1. Convert HSL color → HEX
+        val hslRegex = Regex("hsl\\((\\d+),\\s*(\\d+)%?,\\s*(\\d+)%?\\)")
+        html = html.replace(hslRegex) { match ->
+            val (h, s, l) = match.destructured
+            hslToHex(h.toInt(), s.toInt(), l.toInt())
+        }
+
+        // 2. Remove unsupported classes (like text-big)
+        html = html.replace(Regex("class=\"[^\"]*\""), "")
+
+        // 3. Handle font sizes (example: text-big → bigger font)
+        html = html.replace("text-big", "")
+            .replace("<span>", "<span style=\"font-size:18px;\">")
+
+        // 4. Fix bullet points (bigger bullet + spacing)
+        html = html.replace("<li>", "<br><span style=\"font-size:22px\">&#8226;</span> ")
+            .replace("</li>", "")
+
+        // 5. Remove empty paragraphs
+        html = html.replace("<p>&nbsp;</p>", "")
+            .replace("<p></p>", "")
+
+        return html
+    }
+
+    fun hslToHex(h: Int, s: Int, l: Int): String {
+        val sF = s / 100f
+        val lF = l / 100f
+
+        val c = (1 - Math.abs(2 * lF - 1)) * sF
+        val x = c * (1 - Math.abs((h / 60f) % 2 - 1))
+        val m = lF - c / 2
+
+        var r = 0f; var g = 0f; var b = 0f
+
+        when {
+            h < 60 -> { r = c; g = x; b = 0f }
+            h < 120 -> { r = x; g = c; b = 0f }
+            h < 180 -> { r = 0f; g = c; b = x }
+            h < 240 -> { r = 0f; g = x; b = c }
+            h < 300 -> { r = x; g = 0f; b = c }
+            else -> { r = c; g = 0f; b = x }
+        }
+
+        val rInt = ((r + m) * 255).toInt().coerceIn(0, 255)
+        val gInt = ((g + m) * 255).toInt().coerceIn(0, 255)
+        val bInt = ((b + m) * 255).toInt().coerceIn(0, 255)
+
+        return String.format("#%02X%02X%02X", rInt, gInt, bInt)
+    }
 }

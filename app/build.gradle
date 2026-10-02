@@ -11,21 +11,38 @@ plugins {
 
 android {
 
+    namespace 'com.kelme'
     compileSdk = 36
+
+    flavorDimensions "environment"
+
+    productFlavors {
+
+        dev {
+            dimension "environment"
+            applicationIdSuffix ".dev"
+            versionNameSuffix "-DEV"
+            buildConfigField "String", "BASE_URL", '"https://13.134.14.237/"'
+            resValue "string", "app_name", "Krisk24 Dev"
+        }
+
+        prod {
+            dimension "environment"
+            buildConfigField "String", "BASE_URL", '"https://portal.krisk24.com/"'
+            resValue "string", "app_name", "Krisk24"
+        }
+    }
 
     defaultConfig {
         applicationId "com.kelme"
         minSdk = 24
         targetSdk = 36
         multiDexEnabled = true
-        versionCode = 17
-        versionName = "1.17"
+        versionCode = 18
+        versionName = "1.18"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
-
-
-
 
 
     compileOptions {
@@ -40,6 +57,7 @@ android {
     buildFeatures {
         dataBinding = true
         viewBinding = true
+        buildConfig true
     }
 
     sourceSets {
@@ -61,13 +79,27 @@ android {
     }
 
     buildTypes {
+        debug {
+            //applicationIdSuffix ".debug"   // optional
+            minifyEnabled false
+        }
+
         release {
             signingConfig signingConfigs.release
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
+            minifyEnabled true
+            shrinkResources true
+
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'),
+                    'proguard-rules.pro'
         }
+        /*release {
+            signingConfig signingConfigs.release
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }*/
     }
-    namespace 'com.kelme'
 
 }
 
@@ -178,13 +210,8 @@ dependencies {
     //balloon
         implementation "com.github.skydoves:balloon:1.6.13"
 
-    //PDF viewer
-    //implementation 'com.github.barteksc:AndroidPdfViewer:2.3.0'
-    //implementation 'com.github.barteksc:android-pdf-viewer:2.8.2'
-    //implementation 'com.mindorks.android:prdownloader:0.6.0'
-    //implementation 'com.github.barteksc:android-pdf-viewer:2.8.2'
-    //implementation 'com.github.barteksc:AndroidPdfViewer:v3.2.0-beta.1'
-    //implementation 'com.github.barteksc:android-pdf-viewer:2.8.2'
     implementation 'id.zelory:compressor:3.0.1'
+
+    implementation 'org.jsoup:jsoup:1.17.2'
 
 }

@@ -28,5 +28,13 @@ data class SecurityAlertDetailsModel(
     val status: String,
     val sub_category: List<SubCategory>,
     val title: String,
-    val updated_at: String
+    val updated_at: String,
+    val event_details: ArrayList<EventDetails>,
+)
+
+data class EventDetails(
+    val id: String,
+    val title: String,
+    val html_page_desc: String,
+    val sequence: String
 )
