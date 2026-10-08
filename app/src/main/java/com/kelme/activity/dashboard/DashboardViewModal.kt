@@ -22,6 +22,7 @@ class DashboardViewModal(private val app: Application) :
 
     private val repository = DashboardRepository()
 
+    val appStatus = MutableLiveData<Resource<AppKillStausResponse>?>()
     val logout = MutableLiveData<Resource<String>?>()
     val notificationCount = MutableLiveData<Resource<UnreadMsgModel>>()
     val contactList = MutableLiveData<Resource<List<ContactUserDetailsModel>>?>()
@@ -53,6 +54,29 @@ class DashboardViewModal(private val app: Application) :
             response.body()?.let { res ->
                 return if (res.status) {
                     Resource.Success(res.message, res.message)
+                } else {
+                    Resource.Error(res.message)
+                }
+            }
+        }
+        return Resource.Error(app.resources.getString(R.string.something_went_wrong))
+    }
+
+    fun appStatus(appStatusRequest: AppStatusRequest) = viewModelScope.launch {
+        if (Utils.hasInternetConnection(app.applicationContext)) {
+            appStatus.postValue(Resource.Loading())
+            val response = repository.appStatus(appStatusRequest)
+            appStatus.postValue(handleAppStatusResponse(response))
+        } else {
+            appStatus.postValue(Resource.Error(app.resources.getString(R.string.no_internet)))
+        }
+    }
+
+    private fun handleAppStatusResponse(response: Response<AppKillStausResponse>?): Resource<AppKillStausResponse>? {
+        if (response?.isSuccessful!!) {
+            response.body()?.let { res ->
+                return if (res.status) {
+                    Resource.Success(res.message, res)
                 } else {
                     Resource.Error(res.message)
                 }

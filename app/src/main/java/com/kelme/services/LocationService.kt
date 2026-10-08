@@ -15,6 +15,7 @@ import androidx.core.app.NotificationCompat
 import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.location.*
 import com.kelme.R
+import com.kelme.model.AppStatusRequest
 import com.kelme.model.request.CurrentLocationRequest
 import com.kelme.network.RetrofitInstance
 import com.kelme.utils.PrefManager
@@ -123,14 +124,52 @@ class LocationService : Service() {
                 }
             }
         })
-        return START_STICKY
+        return START_NOT_STICKY
     }
 
     override fun onTaskRemoved(rootIntent: Intent?) {
+
         // Called when app is swiped from recents or process killed
-        stopForeground(true) // remove notification
-        stopSelf() // stop the service
+        //stopForeground(true) // remove notification
+        //stopSelf() // stop the service
+
+        Log.e(
+            "LocationService",
+            "========== onTaskRemoved CALLED =========="
+        )
+
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+
+                if (PrefManager.read(PrefManager.IS_LOGIN, false)) {
+
+                    val request = AppStatusRequest(
+                        PrefManager.read(PrefManager.USER_ID, "").toInt(),
+                        true
+                    )
+
+                    RetrofitInstance.apiService?.appStatus(request)
+
+                    Log.d(
+                        "LocationService",
+                        "App removed API called successfully"
+                    )
+                }
+
+            } catch (e: Exception) {
+                Log.e(
+                    "LocationService",
+                    "Error calling app removed API",
+                    e
+                )
+            } finally {
+                stopForeground(STOP_FOREGROUND_REMOVE)
+                stopSelf()
+            }
+        }
+
         super.onTaskRemoved(rootIntent)
+        Log.d("MyApp", "App is inactive")
     }
 
     suspend fun trackUser(request: CurrentLocationRequest) =

@@ -1,5 +1,6 @@
 package com.kelme.repo
 
+import com.kelme.model.AppStatusRequest
 import com.kelme.model.request.*
 import com.kelme.network.RetrofitInstance
 
@@ -12,6 +13,9 @@ class DashboardRepository {
 
     suspend fun logout() =
         RetrofitInstance.apiService?.logout()
+
+    suspend fun appStatus(appStatusRequest: AppStatusRequest) =
+        RetrofitInstance.apiService?.appStatus(appStatusRequest)
 
     suspend fun contactList(request: ContactListRequest) =
         RetrofitInstance.apiService?.contactList(request)

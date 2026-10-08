@@ -1,5 +1,6 @@
 package com.kelme.network
 
+import com.kelme.model.AppStatusRequest
 import com.kelme.model.request.*
 import com.kelme.model.response.*
 import okhttp3.MultipartBody
@@ -30,6 +31,9 @@ interface Apis {
 
     @POST("insert_user_tracking")
     suspend fun trackUser(@Body request: CurrentLocationRequest): Response<CommonResponse>
+
+    @POST("update_kill_status")
+    suspend fun appStatus(@Body request: AppStatusRequest): Response<AppKillStausResponse>
 
     //dashboard view modal
     @POST("logout")

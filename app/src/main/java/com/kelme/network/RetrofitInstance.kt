@@ -1,19 +1,25 @@
 package com.kelme.network
 
+import android.annotation.SuppressLint
 import android.util.Log
+import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.kelme.BuildConfig
+import com.kelme.utils.AppUpdateManager
+import com.kelme.utils.AppUpdateResponse
 import com.kelme.utils.Constants
 import com.kelme.utils.PrefManager
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import org.json.JSONObject
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 object RetrofitInstance {
 
+    @SuppressLint("SuspiciousIndentation")
     private fun getRetrofitInstance(): Retrofit {
 
         val gson = GsonBuilder()
@@ -40,8 +46,50 @@ object RetrofitInstance {
                 val request = original.newBuilder()
                     .header("Content-Type", "application/json")
                     .header("Authorizations", token.trim())
+                    .header("App-Version", "1.0.3")
+                    .header("Device-Type", "1")
                     .method(original.method, original.body).build()
-                chain.proceed(request)
+                val response = chain.proceed(request)
+
+                //if (response.code == 200) {
+
+                    try {
+
+                        val errorBody = response.peekBody(Long.MAX_VALUE)
+                            .string()
+
+                        val updateResponse =
+                            Gson().fromJson(
+                                errorBody,
+                                AppUpdateResponse::class.java
+                            )
+                        if(updateResponse.code== 426) {
+                            AppUpdateManager.notifyUpdateRequired(
+                                updateResponse?.message
+                                    ?: "A new version of the app is available. Please update your app to continue."
+                            )
+                        }
+                        /*AppUpdateManager.notifyUpdateRequired(
+                            updateResponse?.message
+                                ?: "A new version of the app is available. Please update your app to continue."
+                        )*/
+
+                    } catch (e: Exception) {
+
+                        Log.e(
+                            "AppUpdate",
+                            "Failed to parse update response",
+                            e
+                        )
+
+                        /*AppUpdateManager.notifyUpdateRequired(
+                            "A new version of the app is available. Please update your app to continue."
+                        )*/
+                    }
+                //}
+
+                response
+
             }
             .connectTimeout(60, TimeUnit.SECONDS)
             .readTimeout(60, TimeUnit.SECONDS)

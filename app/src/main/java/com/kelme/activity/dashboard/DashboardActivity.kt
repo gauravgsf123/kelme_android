@@ -64,6 +64,7 @@ import com.kelme.fragment.country.CountryOutlookFragment
 import com.kelme.fragment.profile.ProfileFragment
 import com.kelme.fragment.security.SecurityAlertsFragment
 import com.kelme.interfaces.MyLocationCallback
+import com.kelme.model.AppStatusRequest
 import com.kelme.model.ContactModel
 import com.kelme.model.request.SosAlertRequest
 import com.kelme.model.response.ChatListModelWithName
@@ -202,6 +203,11 @@ class DashboardActivity : BaseActivity() {
             getCurrentLocation()
         }
 
+        val request = AppStatusRequest(
+            PrefManager.read(PrefManager.USER_ID, "").toInt(),
+            false
+        )
+        viewModal.appStatus(request)
 
 
         setUI()
