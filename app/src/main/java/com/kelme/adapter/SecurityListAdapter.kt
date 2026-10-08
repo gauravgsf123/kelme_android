@@ -14,6 +14,9 @@ import com.kelme.databinding.ItemSecurityListBinding
 import com.kelme.interfaces.ItemClickListener
 import com.kelme.model.EventDetails
 import com.kelme.utils.HtmlRenderer
+import com.kelme.utils.HtmlRendererFile
+import com.kelme.utils.Utils
+import com.kelme.utils.html2AttributedString
 
 class SecurityListAdapter(
     private var context: Context,
@@ -59,8 +62,12 @@ class SecurityListAdapter(
 
         fun bind(eventDetails: EventDetails) {
             binding?.tvTitle?.text = eventDetails.title
-            binding?.tvSecurityDetails?.text =
-                HtmlRenderer.render(context, eventDetails.html_page_desc)
+            binding?.tvSecurityDetails?.text = HtmlRendererFile.render(context, eventDetails.html_page_desc)
+            //(Html.fromHtml(Utils.cleanHtml(eventDetails.html_page_desc), Html.FROM_HTML_MODE_COMPACT))
+
+            //HtmlRenderer.render(context, eventDetails.html_page_desc)
+            /*binding?.tvSecurityDetails?.text =
+                eventDetails.html_page_desc.html2AttributedString(context)*/
         }
     }
 
